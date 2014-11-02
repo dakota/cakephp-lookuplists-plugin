@@ -91,6 +91,7 @@ To Do
 
 * Need a better interface to manage lists and list items
 * Improved routing to views & controllers
+* Need to improve data validation
 * Complete the import & export functionality
 * Test cases
 
