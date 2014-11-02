@@ -38,12 +38,14 @@ Usage
 
 You can add the model behavoir in the models that has lists:
 
-    public $actsAs = array('LookupLists.Lists' => array(
-            'fields' => array(
-                'status' => 'user_statuses',
-                'type' => 'user_types'
-            ),
-    ));
+```php
+public $actsAs = array('LookupLists.Lists' => array(
+        'fields' => array(
+            'status' => 'user_statuses',
+            'type' => 'user_types'
+        ),
+));
+```
 
 Where [status] is the field in your users table and [user_statuses] is the name of the list. When a find is done for the model, the plugin will add fields to your result set. 2 fields will be added [status]_value and [status]_slug.
 
@@ -51,7 +53,9 @@ Where [status] is the field in your users table and [user_statuses] is the name 
 
 To read a value from a lookup list, you can use the following code:
 
-    $this->User->getLookupListItemId('status', 'deleted');
+```php
+$this->User->getLookupListItemId('status', 'deleted');
+```
 
 This will return the item_id for the `status` where the slug is equal to `deleted`
 
@@ -61,12 +65,14 @@ You can use the plugin to populate `<select>` form controllers.
 
 You will need to init the LookupList helper in your controller
 
-    public $helpers = array('LookupLists.LookupList');
+```php
+public $helpers = array('LookupLists.LookupList');
+````
 
 In your form, you can use the following code to generate the select form control
 
 ```php
-    <?php echo $this->LookupList->makeList('status', 'user_statuses'); ?>
+<?php echo $this->LookupList->makeList('status', 'user_statuses'); ?>
 ```
 
 status is the field that you would like to update, and user_statuses is the list slug that you want to use. This will only retrieve list items that are set as public
