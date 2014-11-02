@@ -14,3 +14,6 @@ Requirements
 
 Instalation
 -----------
+
+* Clone the repo into /app/Plugins/LookupLists
+* Run the Config/Schema/LookupLists.sql script to create the needed tables
