@@ -1,6 +1,6 @@
 <div class="lookupLists index">
     <h2><?php echo __('Lookup Lists'); ?></h2>
-    <table cellpadding="0" cellspacing="0" class="table table-hover">
+    <table cellpadding="0" cellspacing="0" class="table">
         <thead>
             <tr>
                 <th><?php echo $this->Paginator->sort('id'); ?></th>
