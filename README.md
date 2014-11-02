@@ -10,6 +10,8 @@ You can create lists for statuses, groupings or any database field that has more
 
 Because the lists are decoupled from the model, it allows you to change the value of any of the list items without having an impact on the rest of your database, making sure that database integrity is preserved.
 
+The master branch is always the stable branch. Work continues on version branches.
+
 Requirements
 ------------
 

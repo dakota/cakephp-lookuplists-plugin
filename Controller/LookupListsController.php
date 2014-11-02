@@ -41,7 +41,7 @@ class LookupListsController extends LookupListsAppController
     {
         if (!$this->LookupList->exists($id))
         {
-            throw new NotFoundException(__('Invalid lookup list'));
+            throw new NotFoundException(__('Invalid lookup list'), 'flash_error');
         }
         $options = array('conditions' => array('LookupList.' . $this->LookupList->primaryKey => $id));
         $this->set('lookupList', $this->LookupList->find('first', $options));
@@ -59,7 +59,7 @@ class LookupListsController extends LookupListsAppController
             $this->LookupList->create();
             if ($this->LookupList->save($this->request->data))
             {
-                $this->Session->setFlash(__('The lookup list has been saved.'));
+                $this->Session->setFlash(__('The lookup list has been saved.'), 'flash_notification');
                 return $this->redirect(array('action' => 'index'));
             }
             else
@@ -86,12 +86,12 @@ class LookupListsController extends LookupListsAppController
         {
             if ($this->LookupList->save($this->request->data))
             {
-                $this->Session->setFlash(__('The lookup list has been saved.'));
+                $this->Session->setFlash(__('The lookup list has been saved.'), 'flash_notification');
                 return $this->redirect(array('action' => 'index'));
             }
             else
             {
-                $this->Session->setFlash(__('The lookup list could not be saved. Please, try again.'));
+                $this->Session->setFlash(__('The lookup list could not be saved. Please, try again.'), 'flash_error');
             }
         }
         else
@@ -99,6 +99,8 @@ class LookupListsController extends LookupListsAppController
             $options = array('conditions' => array('LookupList.' . $this->LookupList->primaryKey => $id));
             $this->request->data = $this->LookupList->find('first', $options);
         }
+        $options = array('conditions' => array('LookupList.' . $this->LookupList->primaryKey => $id));
+        $this->set('lookupList', $this->LookupList->find('first', $options));
     }
 
     /**
@@ -113,21 +115,20 @@ class LookupListsController extends LookupListsAppController
         $this->LookupList->id = $id;
         if (!$this->LookupList->exists())
         {
-            throw new NotFoundException(__('Invalid lookup list'));
+            throw new NotFoundException(__('Invalid lookup list'), 'flash_error');
         }
         $this->request->allowMethod('post', 'delete');
         if ($this->LookupList->delete($id, true))
         {
-            $this->Session->setFlash(__('The lookup list has been deleted.'));
+            $this->Session->setFlash(__('The lookup list has been deleted.'), 'flash_notification');
         }
         else
         {
-            $this->Session->setFlash(__('The lookup list could not be deleted. Please, try again.'));
+            $this->Session->setFlash(__('The lookup list could not be deleted. Please, try again.'), 'flash_error');
         }
         return $this->redirect(array('action' => 'index'));
     }
 
-    
     //## Download a json file with all available list data
     public function export()
     {

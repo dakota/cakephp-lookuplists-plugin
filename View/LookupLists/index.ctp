@@ -7,38 +7,38 @@
                 <th><?php echo $this->Paginator->sort('name'); ?></th>
                 <th><?php echo $this->Paginator->sort('slug'); ?></th>
                 <th><?php echo $this->Paginator->sort('public'); ?></th>
-                <th class="actions"><?php echo __('Actions'); ?></th>
+                <th class="actions" style="width:100px;"><?php echo __('Actions'); ?></th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($lookupLists as $lookupList): ?>
                 <tr>
                     <td><?php echo h($lookupList['LookupList']['id']); ?>&nbsp;</td>
-                    <td><?php echo h($lookupList['LookupList']['name']); ?>&nbsp;</td>
+                    <td><?php echo $this->html->link($lookupList['LookupList']['name'], array('plugin' => 'lookup_lists', 'controller' => 'lookup_lists', 'action' => 'edit', $lookupList['LookupList']['id'])); ?>&nbsp;</td>
                     <td><?php echo h($lookupList['LookupList']['slug']); ?>&nbsp;</td>
-                    <td><?php echo h($lookupList['LookupList']['public']); ?>&nbsp;</td>
+                    <td><?php echo $lookupList['LookupList']['public'] ? 'Yes' : 'No'; ?>&nbsp;</td>
                     <td class="actions">
-                        <?php echo $this->Html->link(__('View'), array('action' => 'view', $lookupList['LookupList']['id'])); ?>
-                        <?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $lookupList['LookupList']['id'])); ?>
-                        <?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $lookupList['LookupList']['id']), array(), __('Are you sure you want to delete # %s?', $lookupList['LookupList']['id'])); ?>
+                        <?php echo $this->Html->link(__('Edit'), array('plugin' => 'lookup_lists', 'action' => 'edit', $lookupList['LookupList']['id']), array('class' => 'btn btn-primary btn-xs')); ?>
+                        <?php echo $this->Form->postLink(__('Delete'), array('plugin' => 'lookup_lists', 'action' => 'delete', $lookupList['LookupList']['id']), array('class' => 'btn btn-danger btn-xs'), __('Are you sure you want to delete # %s?', $lookupList['LookupList']['id'])); ?>
                     </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
-    <p>
-        <?php
-        echo $this->Paginator->counter(array(
-            'format' => __('Page {:page} of {:pages}, showing {:current} records out of {:count} total, starting on record {:start}, ending on {:end}')
-        ));
-        ?>	</p>
-    <div class="paging">
-        <?php
-        echo $this->Paginator->prev('< ' . __('previous'), array(), null, array('class' => 'prev disabled'));
-        echo $this->Paginator->numbers(array('separator' => ''));
-        echo $this->Paginator->next(__('next') . ' >', array(), null, array('class' => 'next disabled'));
-        ?>
-    </div>
+
+    <!--start counts and paging-->
+    <nav>
+        <ul class="pagination">
+            <?php
+            echo $this->Paginator->first('&laquo;', array('escape' => false, 'tag' => 'li', 'disabledTag' => 'a'), null, array('escape' => false, 'class' => 'disabled', 'tag' => 'li', 'disabledTag' => 'a'));
+            echo $this->Paginator->prev('&laquo;', array('escape' => false, 'tag' => 'li', 'disabledTag' => 'a'), null, array('escape' => false, 'class' => 'disabled', 'tag' => 'li', 'disabledTag' => 'a'));
+            echo $this->Paginator->numbers(array('separator' => '', 'class' => 'paging', 'tag' => 'li', 'currentClass' => 'active', 'currentTag' => 'a'));
+            echo $this->Paginator->next('&raquo;', array('escape' => false, 'tag' => 'li', 'disabledTag' => 'a'), null, array('escape' => false, 'class' => 'disabled', 'tag' => 'li', 'disabledTag' => 'a'));
+            echo $this->Paginator->last('&raquo;', array('escape' => false, 'tag' => 'li', 'disabledTag' => 'a'), null, array('escape' => false, 'class' => 'disabled', 'tag' => 'li', 'disabledTag' => 'a'));
+            ?>
+        </ul>
+    </nav>
+    <!--end counts and paging-->
 </div>
 <div class="actions">
     <h3><?php echo __('Actions'); ?></h3>
