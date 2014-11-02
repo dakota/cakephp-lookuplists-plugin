@@ -93,3 +93,6 @@ To Do
 * Improved routing to views & controllers
 * Complete the import & export functionality
 * Test cases
+
+
+If you find any issues with the plugin, please create a new issue within [GitHub](https://github.com/jacoroux/cakephp-lookuplists-plugin/issues)
