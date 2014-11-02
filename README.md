@@ -23,6 +23,8 @@ Instalation
 Usage
 -----
 
+**In Models**
+
 You can add the model behavoir in the models that has lists
 
     public $actsAs = array('LookupLists.Lists' => array(
@@ -33,3 +35,24 @@ You can add the model behavoir in the models that has lists
     ));
 
 Where [status] is the field in your users table and [user_statuses] is the name of the list. When a find is done for the model, the plugin will add fields to your result set. 2 fields will be added [status]_value and [status]_slug.
+
+**In Controllers**
+
+To read a value from a lookup list, you can use the following code
+
+    $this->User->getLookupListItemId('status', 'deleted');
+
+This will return the item_id for the `status` where the slug is equal to `deleted`
+
+**In Views**
+
+You can use the plugin to populate `<select>` form controllers.
+
+You will need to init the LookupList helper in your controller
+
+    public $helpers = array('LookupLists.LookupList');
+
+In your form, you can use the following code to generate the select form control
+
+    <?php echo $this->LookupList->makeList('status', 'user_statuses'); ?>
+
