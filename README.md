@@ -17,3 +17,18 @@ Instalation
 
 * Clone the repo into /app/Plugins/LookupLists
 * Run the Config/Schema/LookupLists.sql script to create the needed tables
+* Enable the plugin by adding CakePlugin::load('LookupLists'); to your bootstrap.php
+
+
+Usage
+-----
+
+You can add the model behavoir in the models that has lists
+
+    public $actsAs = array('LookupLists.Lists' => array(
+            'fields' => array(
+                'status' => 'user_statuses',
+                'type' => 'user_types'
+            ),
+    ));
+
