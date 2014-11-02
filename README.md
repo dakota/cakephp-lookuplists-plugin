@@ -32,3 +32,4 @@ You can add the model behavoir in the models that has lists
             ),
     ));
 
+Where [status] is the field in your users table and [user_statuses] is the name of the list. When a find is done for the model, the plugin will add fields to your result set. 2 fields will be added [status]_value and [status]_slug.
