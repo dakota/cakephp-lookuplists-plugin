@@ -127,6 +127,8 @@ class LookupListsController extends LookupListsAppController
         return $this->redirect(array('action' => 'index'));
     }
 
+    
+    //## Download a json file with all available list data
     public function export()
     {
         $data = $this->LookupList->find('all');
