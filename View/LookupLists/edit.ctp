@@ -1,3 +1,9 @@
+<ol class="breadcrumb">
+  <li><a href="/">Home</a></li>
+  <li><?php echo $this->Html->link('Lists', array('action' => 'index')) ?></li>
+  <li class="active">Edit List</li>
+</ol>
+
 <div class="lookupLists form">
     <?php echo $this->Form->create('LookupList'); ?>
     <fieldset>
@@ -25,24 +31,20 @@
     <?php if (!empty($lookupList['LookupListItem'])): ?>
         <table class="table">
             <tr>
-                <th><?php echo __('Id'); ?></th>
-                <th><?php echo __('Lookup List Id'); ?></th>
                 <th><?php echo __('Item Id'); ?></th>
-                <th><?php echo __('Slug'); ?></th>
                 <th><?php echo __('Value'); ?></th>
+                <th><?php echo __('Slug'); ?></th>
                 <th><?php echo __('Display Order'); ?></th>
                 <th><?php echo __('Default'); ?></th>
                 <th class="actions" style="width:100px"><?php echo __('Actions'); ?></th>
             </tr>
             <?php foreach ($lookupList['LookupListItem'] as $lookupListItem): ?>
                 <tr>
-                    <td><?php echo $lookupListItem['id']; ?></td>
-                    <td><?php echo $lookupListItem['lookup_list_id']; ?></td>
                     <td><?php echo $lookupListItem['item_id']; ?></td>
-                    <td><?php echo $lookupListItem['slug']; ?></td>
                     <td><?php echo $lookupListItem['value']; ?></td>
+                    <td><?php echo $lookupListItem['slug']; ?></td>
                     <td><?php echo $lookupListItem['display_order']; ?></td>
-                    <td><?php echo $lookupListItem['default']; ?></td>
+                    <td><?php echo $lookupListItem['default'] ? 'Yes' : 'No'; ?></td>
                     <td class="actions">
                         <?php echo $this->Html->link(__('Edit'), array('controller' => 'lookup_list_items', 'action' => 'edit', $lookupListItem['id']), array('class' => 'btn btn-primary btn-xs')); ?>
                         <?php echo $this->Form->postLink(__('Delete'), array('controller' => 'lookup_list_items', 'action' => 'delete', $lookupListItem['id']), array('class' => 'btn btn-danger btn-xs'), __('Are you sure you want to delete # %s?', $lookupListItem['id'])); ?>
