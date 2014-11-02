@@ -11,3 +11,6 @@ Requirements
 * CakePHP 2.5.4+
 * PHP 5.2.8+
 
+
+Instalation
+-----------
