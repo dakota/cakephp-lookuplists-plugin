@@ -4,9 +4,11 @@ CakePHP Lookup Lists Plugin
 Version: 0.1
 ------------
 
-The **Lookup Lists** plugin enables developers to create global lists that are accessible in all your models, controllers and views. 
+The **Lookup Lists** plugin enables developers to create global lists that are accessible in all your models, controllers and views. This gives you a central place to manage all lists that are used in your app.
 
 You can create lists for statuses, groupings or any database field that has more than one option. For example: if Users can have multiple statuses, you can create a list for all the statuses.
+
+Because the lists are decoupled from the model, it allows you to change the value of any of the list items without having an impact on the rest of your database, making sure that database integrity is preserved.
 
 Requirements
 ------------
@@ -82,4 +84,4 @@ To Do
 * Need a better interface to manage lists and list items
 * Improved routing to views & controllers
 * Complete the import & export functionality
-* Unit test cases
+* Test cases
