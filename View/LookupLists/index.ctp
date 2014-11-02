@@ -1,14 +1,12 @@
 <div class="lookupLists index">
     <h2><?php echo __('Lookup Lists'); ?></h2>
-    <table cellpadding="0" cellspacing="0">
+    <table cellpadding="0" cellspacing="0" class="table table-hover">
         <thead>
             <tr>
                 <th><?php echo $this->Paginator->sort('id'); ?></th>
-                <th><?php echo $this->Paginator->sort('slug'); ?></th>
                 <th><?php echo $this->Paginator->sort('name'); ?></th>
+                <th><?php echo $this->Paginator->sort('slug'); ?></th>
                 <th><?php echo $this->Paginator->sort('public'); ?></th>
-                <th><?php echo $this->Paginator->sort('created'); ?></th>
-                <th><?php echo $this->Paginator->sort('modified'); ?></th>
                 <th class="actions"><?php echo __('Actions'); ?></th>
             </tr>
         </thead>
@@ -16,11 +14,9 @@
             <?php foreach ($lookupLists as $lookupList): ?>
                 <tr>
                     <td><?php echo h($lookupList['LookupList']['id']); ?>&nbsp;</td>
-                    <td><?php echo h($lookupList['LookupList']['slug']); ?>&nbsp;</td>
                     <td><?php echo h($lookupList['LookupList']['name']); ?>&nbsp;</td>
+                    <td><?php echo h($lookupList['LookupList']['slug']); ?>&nbsp;</td>
                     <td><?php echo h($lookupList['LookupList']['public']); ?>&nbsp;</td>
-                    <td><?php echo h($lookupList['LookupList']['created']); ?>&nbsp;</td>
-                    <td><?php echo h($lookupList['LookupList']['modified']); ?>&nbsp;</td>
                     <td class="actions">
                         <?php echo $this->Html->link(__('View'), array('action' => 'view', $lookupList['LookupList']['id'])); ?>
                         <?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $lookupList['LookupList']['id'])); ?>

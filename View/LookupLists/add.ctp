@@ -1,14 +1,17 @@
 <div class="lookupLists form">
-    <?php echo $this->Form->create('LookupList'); ?>
+    <h3>Create new Lookup List</h3>
+    <?php echo $this->Form->create('LookupList', array()); ?>
     <fieldset>
-        <legend><?php echo __('Add Lookup List'); ?></legend>
         <?php
-        //echo $this->Form->input('slug');
-        echo $this->Form->input('name');
-        echo $this->Form->input('public');
+        echo $this->Form->input('name', array(
+            'div' => array('class' => 'form-group'),
+            'label' => array(),
+            'class' => 'form-control'
+        ));
+        echo $this->Form->input('public', array('div' => array('class' => 'checkbox'),'label' => false,'before' => '<label>','after' => 'Public</label>',));
         ?>
     </fieldset>
-    <?php echo $this->Form->end(__('Submit')); ?>
+    <?php echo $this->Form->submit(__('Submit'), array('class' => 'btn btn-primary')); ?>
 </div>
 <div class="actions">
     <h3><?php echo __('Actions'); ?></h3>

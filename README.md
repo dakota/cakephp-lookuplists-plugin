@@ -15,6 +15,8 @@ Requirements
 
 * CakePHP 2.5.4+
 * PHP 5.2.8+
+* Twitter Bootstrap 3.0+ (Only needed for management interfaces)
+* jQuery 1.9+ (Only needed for management interfaces)
 
 
 Instalation
