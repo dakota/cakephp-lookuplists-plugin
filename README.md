@@ -1,6 +1,9 @@
 CakePHP Lookup Lists Plugin
 ===========================
 
+Version: 0.1
+------------
+
 The **Lookup Lists** plugin enables developers to create global lists that are accessible in all your models, controllers and views 
 
 You can create lists for statuses, groupings or any database field that has more than one option. For example: if Users can have multiple statuses, you can create a list for all the statuses.
@@ -56,3 +59,14 @@ In your form, you can use the following code to generate the select form control
 
     <?php echo $this->LookupList->makeList('status', 'user_statuses'); ?>
 
+Changelog
+-----
+
+**0.1: Initial Release - 2 November 2014**
+
+To Do
+-----
+
+* Need a better interface to manage lists and list items
+* Improved routing to views & controllers
+* Complete the import & export functionality
