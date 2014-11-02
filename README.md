@@ -65,7 +65,9 @@ You will need to init the LookupList helper in your controller
 
 In your form, you can use the following code to generate the select form control
 
+```php
     <?php echo $this->LookupList->makeList('status', 'user_statuses'); ?>
+```
 
 status is the field that you would like to update, and user_statuses is the list slug that you want to use. This will only retrieve list items that are set as public
 
