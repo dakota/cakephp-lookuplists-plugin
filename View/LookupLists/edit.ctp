@@ -17,6 +17,7 @@
                 <th><?php echo __('Slug'); ?></th>
                 <th><?php echo __('Display Order'); ?></th>
                 <th><?php echo __('Default'); ?></th>
+                <th><?php echo __('Public'); ?></th>
                 <th class="actions" style="width:100px"><?php echo __('Actions'); ?></th>
             </tr>
             <?php foreach ($lookupList['LookupListItem'] as $lookupListItem): ?>
@@ -26,6 +27,7 @@
                     <td><?php echo $lookupListItem['slug']; ?></td>
                     <td><?php echo $lookupListItem['display_order']; ?></td>
                     <td><?php echo $lookupListItem['default'] ? 'Yes' : 'No'; ?></td>
+                    <td><?php echo $lookupListItem['public'] ? 'Yes' : 'No'; ?></td>
                     <td class="actions">
                         <?php echo $this->Html->link(__('Edit'), array('controller' => 'lookup_list_items', 'action' => 'edit', $lookupListItem['id'], '?' => array('lookup_list_id' => $lookupList["LookupList"]["id"])), array('class' => 'btn btn-primary btn-xs')); ?>
                         <?php echo $this->Form->postLink(__('Delete'), array('controller' => 'lookup_list_items', 'action' => 'delete', $lookupListItem['id']), array('class' => 'btn btn-danger btn-xs'), __('Are you sure you want to delete # %s?', $lookupListItem['id'])); ?>
