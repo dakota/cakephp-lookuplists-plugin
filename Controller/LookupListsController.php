@@ -87,7 +87,7 @@ class LookupListsController extends LookupListsAppController
             if ($this->LookupList->save($this->request->data))
             {
                 $this->Session->setFlash(__('The lookup list has been saved.'), 'flash_notification');
-                return $this->redirect(array('action' => 'index'));
+                return $this->redirect(array('action' => 'edit', $id));
             }
             else
             {

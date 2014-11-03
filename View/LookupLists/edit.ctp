@@ -1,7 +1,7 @@
 <ol class="breadcrumb">
-  <li><a href="/">Home</a></li>
-  <li><?php echo $this->Html->link('Lists', array('action' => 'index')) ?></li>
-  <li class="active">Edit List</li>
+    <li><a href="/">Home</a></li>
+    <li><?php echo $this->Html->link('Lists', array('action' => 'index')) ?></li>
+    <li class="active">Edit List</li>
 </ol>
 
 <div class="lookupLists form">
@@ -20,7 +20,7 @@
             'label' => array(),
             'class' => 'form-control'
         ));
-        echo $this->Form->input('public', array('div' => array('class' => 'checkbox'),'label' => false,'before' => '<label>','after' => 'Public</label>',));
+        echo $this->Form->input('public', array('div' => array('class' => 'checkbox'), 'label' => false, 'before' => '<label>', 'after' => 'Public</label>',));
         ?>
     </fieldset>
     <?php echo $this->Form->submit(__('Submit'), array('class' => 'btn btn-primary')); ?>
@@ -46,7 +46,7 @@
                     <td><?php echo $lookupListItem['display_order']; ?></td>
                     <td><?php echo $lookupListItem['default'] ? 'Yes' : 'No'; ?></td>
                     <td class="actions">
-                        <?php echo $this->Html->link(__('Edit'), array('controller' => 'lookup_list_items', 'action' => 'edit', $lookupListItem['id']), array('class' => 'btn btn-primary btn-xs')); ?>
+                        <?php echo $this->Html->link(__('Edit'), array('controller' => 'lookup_list_items', 'action' => 'edit', $lookupListItem['id'], '?' => array('lookup_list_id' => $lookupList["LookupList"]["id"])), array('class' => 'btn btn-primary btn-xs')); ?>
                         <?php echo $this->Form->postLink(__('Delete'), array('controller' => 'lookup_list_items', 'action' => 'delete', $lookupListItem['id']), array('class' => 'btn btn-danger btn-xs'), __('Are you sure you want to delete # %s?', $lookupListItem['id'])); ?>
                     </td>
                 </tr>
@@ -56,9 +56,12 @@
 
     <div class="actions">
         <ul>
-            <li><?php echo $this->Html->link(__('New Lookup List Item'), array('controller' => 'lookup_list_items', 'action' => 'add')); ?> </li>
+            <li><?php echo $this->Html->link(__('New Lookup List Item'), array('controller' => 'lookup_list_items', 'action' => 'add', '?' => array('lookup_list_id' => $lookupList["LookupList"]["id"]))); ?> </li>
         </ul>
     </div>
+
+    
+
 </div>
 
 <div class="actions">

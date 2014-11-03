@@ -89,7 +89,7 @@ Changelog
 -----
 
 **0.2: Initial Release - ?? November 2014**
-* New Interface (Using Standard Twitter Bootstrap & jQuery)
+* New Interface (Using Standard Twitter Bootstrap 3.0 & jQuery)
 * Improved validation rules
 
 
@@ -103,6 +103,7 @@ To Do
 * Need to improve data validation
 * Complete the import & export functionality
 * Test cases
+* When editing a list item, and the name changes to an existing name within the same list, an error is thrown.
 
 
 If you find any issues with the plugin, please create a new issue within [GitHub](https://github.com/jacoroux/cakephp-lookuplists-plugin/issues)
