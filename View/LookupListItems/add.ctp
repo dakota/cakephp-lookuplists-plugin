@@ -18,7 +18,7 @@
         ));
         //echo $this->Form->input('display_order');
         echo $this->Form->input('default', array('div' => array('class' => 'checkbox'), 'label' => false, 'before' => '<label>', 'after' => 'Default</label>',));
-        echo $this->Form->input('public', array('div' => array('class' => 'checkbox'), 'label' => false, 'before' => '<label>', 'after' => 'Public</label>',));
+        echo $this->Form->input('public', array('default' => 1, 'div' => array('class' => 'checkbox'), 'label' => false, 'before' => '<label>', 'after' => 'Public</label>',));
         ?>
     </fieldset>
     <?php echo $this->Form->submit(__('Submit'), array('class' => 'btn btn-primary')); ?>

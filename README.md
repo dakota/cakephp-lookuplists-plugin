@@ -21,8 +21,8 @@ Requirements
 * jQuery 1.9+ (Only needed for management interfaces)
 
 
-Instalation
------------
+Installation
+------------
 
 * Clone the repo into /app/Plugins/LookupLists.
 * Run the Config/Schema/LookupLists.sql script to create the needed tables.
@@ -104,6 +104,7 @@ To Do
 * Complete the import & export functionality
 * Test cases
 * When editing a list item, and the name changes to an existing name within the same list, an error is thrown.
+* Checks to ensure integrity of data (List must always have at least one default option etc)
 
 
 If you find any issues with the plugin, please create a new issue within [GitHub](https://github.com/jacoroux/cakephp-lookuplists-plugin/issues)

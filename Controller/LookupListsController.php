@@ -31,23 +31,6 @@ class LookupListsController extends LookupListsAppController
     }
 
     /**
-     * view method
-     *
-     * @throws NotFoundException
-     * @param string $id
-     * @return void
-     */
-    public function view($id = null)
-    {
-        if (!$this->LookupList->exists($id))
-        {
-            throw new NotFoundException(__('Invalid lookup list'), 'flash_error');
-        }
-        $options = array('conditions' => array('LookupList.' . $this->LookupList->primaryKey => $id));
-        $this->set('lookupList', $this->LookupList->find('first', $options));
-    }
-
-    /**
      * add method
      *
      * @return void

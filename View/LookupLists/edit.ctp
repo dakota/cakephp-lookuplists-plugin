@@ -4,30 +4,11 @@
     <li class="active">Edit List</li>
 </ol>
 
-<div class="lookupLists form">
-    <?php echo $this->Form->create('LookupList'); ?>
-    <fieldset>
-        <legend><?php echo __('Edit Lookup List'); ?></legend>
-        <?php
-        echo $this->Form->input('id');
-        echo $this->Form->input('slug', array(
-            'div' => array('class' => 'form-group'),
-            'label' => array(),
-            'class' => 'form-control'
-        ));
-        echo $this->Form->input('name', array(
-            'div' => array('class' => 'form-group'),
-            'label' => array(),
-            'class' => 'form-control'
-        ));
-        echo $this->Form->input('public', array('div' => array('class' => 'checkbox'), 'label' => false, 'before' => '<label>', 'after' => 'Public</label>',));
-        ?>
-    </fieldset>
-    <?php echo $this->Form->submit(__('Submit'), array('class' => 'btn btn-primary')); ?>
-</div>
-
 <div class="related">
-    <h3><?php echo __('Related Lookup List Items'); ?></h3>
+    <h4><?php echo __('Related Lookup List Items'); ?></h4>
+    <p>
+        <?php echo $this->Html->link('New List Item', array('controller' => 'lookup_list_items', 'action' => 'add', '?' => array('lookup_list_id' => $lookupList["LookupList"]["id"])), array('class' => 'btn btn-primary btn-xs')) ?>
+    </p>
     <?php if (!empty($lookupList['LookupListItem'])): ?>
         <table class="table">
             <tr>
@@ -53,24 +34,29 @@
             <?php endforeach; ?>
         </table>
     <?php endif; ?>
-
-    <div class="actions">
-        <ul>
-            <li><?php echo $this->Html->link(__('New Lookup List Item'), array('controller' => 'lookup_list_items', 'action' => 'add', '?' => array('lookup_list_id' => $lookupList["LookupList"]["id"]))); ?> </li>
-        </ul>
-    </div>
-
-    
-
 </div>
 
-<div class="actions">
-    <h3><?php echo __('Actions'); ?></h3>
-    <ul>
-
-        <li><?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $this->Form->value('LookupList.id')), array(), __('Are you sure you want to delete # %s?', $this->Form->value('LookupList.id'))); ?></li>
-        <li><?php echo $this->Html->link(__('List Lookup Lists'), array('action' => 'index')); ?></li>
-        <li><?php echo $this->Html->link(__('List Lookup List Items'), array('controller' => 'lookup_list_items', 'action' => 'index')); ?> </li>
-        <li><?php echo $this->Html->link(__('New Lookup List Item'), array('controller' => 'lookup_list_items', 'action' => 'add')); ?> </li>
-    </ul>
+<div class="lookupLists form">
+    <?php echo $this->Form->create('LookupList'); ?>
+    <fieldset>
+        <legend><?php echo __('Edit Lookup List'); ?></legend>
+        <?php
+        echo $this->Form->input('id');
+        echo $this->Form->input('slug', array(
+            'div' => array('class' => 'form-group'),
+            'label' => array(),
+            'class' => 'form-control'
+        ));
+        echo $this->Form->input('name', array(
+            'div' => array('class' => 'form-group'),
+            'label' => array(),
+            'class' => 'form-control'
+        ));
+        echo $this->Form->input('public', array('div' => array('class' => 'checkbox'), 'label' => false, 'before' => '<label>', 'after' => 'Public</label>',));
+        ?>
+    </fieldset>
+    <?php echo $this->Form->submit(__('Submit'), array('class' => 'btn btn-primary')); ?>
 </div>
+
+
+

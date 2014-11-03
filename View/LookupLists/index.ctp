@@ -1,10 +1,18 @@
 <ol class="breadcrumb">
-  <li><a href="/">Home</a></li>
-  <li class="active">Lists</li>
+    <li><a href="/">Home</a></li>
+    <li class="active">Lists</li>
 </ol>
 
 <div class="lookupLists index">
+
+
     <h2><?php echo __('Lookup Lists'); ?></h2>
+    <?php echo $this->Html->link('Create New List', array('controller' => 'lookup_lists', 'action' => 'add'), array('class' => 'btn btn-primary btn-xs')) ?>
+    <?php //echo $this->Html->link('Export', array('controller' => 'lookup_lists', 'action' => 'export'), array('class' => 'btn btn-info btn-xs')) ?>
+    <?php //echo $this->Html->link('Import', array('controller' => 'lookup_lists', 'action' => 'import'), array('class' => 'btn btn-info btn-xs')) ?>
+
+
+
     <table cellpadding="0" cellspacing="0" class="table">
         <thead>
             <tr>
@@ -45,13 +53,4 @@
     </nav>
     <!--end counts and paging-->
 </div>
-<div class="actions">
-    <h3><?php echo __('Actions'); ?></h3>
-    <ul>
-        <li><?php echo $this->Html->link(__('New Lookup List'), array('controller' => 'lookup_lists', 'action' => 'add')); ?></li>
-        <li><?php echo $this->Html->link(__('List Lookup List Items'), array('controller' => 'lookup_list_items', 'action' => 'index')); ?> </li>
-        <li><?php echo $this->Html->link(__('New Lookup List Item'), array('controller' => 'lookup_list_items', 'action' => 'add')); ?> </li>
-        <li><?php echo $this->Html->link(__('Export'), array('controller' => 'lookup_lists', 'action' => 'export')); ?></li>
-        <li><?php echo $this->Html->link(__('Import'), array('controller' => 'lookup_lists', 'action' => 'import')); ?></li>
-    </ul>
-</div>
+

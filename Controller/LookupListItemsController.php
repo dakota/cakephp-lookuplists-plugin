@@ -21,72 +21,43 @@ class LookupListItemsController extends LookupListsAppController
     public $uses = array('LookupLists.LookupList', 'LookupLists.LookupListItem');
 
     /**
-     * index method
-     *
-     * @return void
-     */
-    public function index()
-    {
-        $this->LookupListItem->recursive = 0;
-        $this->set('lookupListItems', $this->Paginator->paginate());
-    }
-
-    /**
-     * view method
-     *
-     * @throws NotFoundException
-     * @param string $id
-     * @return void
-     */
-    public function view($id = null)
-    {
-        if (!$this->LookupListItem->exists($id))
-        {
-            throw new NotFoundException(__('Invalid lookup list item'));
-        }
-        $options = array('conditions' => array('LookupListItem.' . $this->LookupListItem->primaryKey => $id));
-        $this->set('lookupListItem', $this->LookupListItem->find('first', $options));
-    }
-
-    /**
      * add method
      *
      * @return void
      */
     public function add()
     {
-        
-        
+
+
         if ($this->request->is('post'))
         {
             $this->LookupListItem->create();
             if ($this->LookupListItem->save($this->request->data))
             {
                 $this->Session->setFlash(__('The lookup list item has been saved.'), 'flash_notification');
-                return $this->redirect(array('controller' => 'lookup_lists','action' => 'edit', $this->request->data["LookupListItem"]['lookup_list_id']));
+                return $this->redirect(array('controller' => 'lookup_lists', 'action' => 'edit', $this->request->data["LookupListItem"]['lookup_list_id']));
             }
             else
             {
                 $this->Session->setFlash(__('The lookup list item could not be saved. Please, try again.'), 'flash_error');
             }
         }
-        
-        
-        if(!isset($this->request->query["lookup_list_id"]))
+
+
+        if (!isset($this->request->query["lookup_list_id"]))
         {
             return $this->redirect(array('controller' => 'lookup_lists', 'action' => 'index'));
         }
-        
+
         if (!$this->LookupList->exists($this->request->query["lookup_list_id"]))
         {
             throw new NotFoundException(__('Invalid lookup list'));
         }
-        
+
         $this->LookupListItem->recursive = -1;
         $lookupList = $this->LookupList->find('first', array('conditions' => array('LookupList.id' => $this->request->query["lookup_list_id"])));
-        
+
         //debug($lookupList);
-        
         //$lookupLists = $this->LookupListItem->LookupList->find('list');
         $this->set(compact('lookupList'));
     }
@@ -109,7 +80,7 @@ class LookupListItemsController extends LookupListsAppController
             if ($this->LookupListItem->save($this->request->data))
             {
                 $this->Session->setFlash(__('The lookup list item has been saved.'), 'flash_notification');
-                 return $this->redirect(array('controller' => 'lookup_lists','action' => 'edit', $this->request->data["LookupListItem"]['lookup_list_id']));
+                return $this->redirect(array('controller' => 'lookup_lists', 'action' => 'edit', $this->request->data["LookupListItem"]['lookup_list_id']));
             }
             else
             {
@@ -136,12 +107,12 @@ class LookupListItemsController extends LookupListsAppController
     public function delete($id = null)
     {
         $lookup_list = $this->LookupListItem->find('first', array('conditions' => array('LookupListItem.id' => $id)));
-        
+
         $list_id = null;
-        
-        if($lookup_list)
+
+        if ($lookup_list)
             $list_id = $lookup_list["LookupListItem"]["lookup_list_id"];
-        
+
         $this->LookupListItem->id = $id;
         if (!$this->LookupListItem->exists())
         {
@@ -156,10 +127,10 @@ class LookupListItemsController extends LookupListsAppController
         {
             $this->Session->setFlash(__('The lookup list item could not be deleted. Please, try again.'), 'flash_error');
         }
-        
-        
-        
-        
+
+
+
+
         return $this->redirect(array('controller' => 'lookup_lists', 'action' => 'edit', $list_id));
     }
 
