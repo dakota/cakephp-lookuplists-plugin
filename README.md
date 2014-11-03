@@ -1,7 +1,7 @@
 CakePHP Lookup Lists Plugin
 ===========================
 
-Version: 0.1
+Version: 0.2
 ------------
 
 The **Lookup Lists** plugin enables developers to create global lists that are accessible in all your models, controllers and views. This gives you a central place to manage all lists that are used in your app.
@@ -9,6 +9,8 @@ The **Lookup Lists** plugin enables developers to create global lists that are a
 You can create lists for statuses, groupings or any database field that has more than one option. For example: if Users can have multiple statuses, you can create a list for all the statuses.
 
 Because the lists are decoupled from the model, it allows you to change the value of any of the list items without having an impact on the rest of your database, making sure that database integrity is preserved.
+
+The master branch is always the stable branch. Work continues on version branches.
 
 Requirements
 ------------
@@ -19,8 +21,8 @@ Requirements
 * jQuery 1.9+ (Only needed for management interfaces)
 
 
-Instalation
------------
+Installation
+------------
 
 * Clone the repo into /app/Plugins/LookupLists.
 * Run the Config/Schema/LookupLists.sql script to create the needed tables.
@@ -86,6 +88,11 @@ status is the field that you would like to update, and user_statuses is the list
 Changelog
 -----
 
+**0.2: Initial Release - ?? November 2014**
+* New Interface (Using Standard Twitter Bootstrap 3.0 & jQuery)
+* Improved validation rules
+
+
 **0.1: Initial Release - 2 November 2014**
 
 To Do
@@ -96,6 +103,8 @@ To Do
 * Need to improve data validation
 * Complete the import & export functionality
 * Test cases
+* When editing a list item, and the name changes to an existing name within the same list, an error is thrown.
+* Checks to ensure integrity of data (List must always have at least one default option etc)
 
 
 If you find any issues with the plugin, please create a new issue within [GitHub](https://github.com/jacoroux/cakephp-lookuplists-plugin/issues)

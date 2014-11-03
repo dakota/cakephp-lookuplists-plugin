@@ -41,6 +41,7 @@ class LookupListItem extends LookupListsAppModel
             'uniquePerList' => array(
                 'rule' => array('uniquePerList'),
                 'message' => 'List slug must be unique',
+                'on' => 'create',
             ),
         ),
         'value' => array(
