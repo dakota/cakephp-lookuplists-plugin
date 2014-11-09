@@ -39,7 +39,7 @@ class LookupList extends LookupListsAppModel
                 'rule' => array('notEmpty'),
                 'message' => 'List Name is required',
                 'required' => true,
-                'on' => 'create', 
+                'on' => 'create',
             ),
         ),
         'public' => array(
@@ -72,20 +72,29 @@ class LookupList extends LookupListsAppModel
 
     public function listItems($list_slug)
     {
-        $list_id = $this->find('first', array('recursive' => -1, 'fields' => 'LookupList.id', 'conditions' => array('LookupList.slug' => $list_slug)));
+        $key = "LookupListIDbySlug_" . $list_slug;
+
+        $list_id = $this->_listIdBySlug($list_slug);
 
         $list_items = array();
 
         if ($list_id)
         {
-            $list_items = $this->LookupListItem->find('list', array(
-                'conditions' => array(
-                    'LookupListItem.lookup_list_id' => $list_id['LookupList']['id'],
-                    'LookupListItem.public' => true,
-                ),
-                'order' => array('LookupListItem.display_order' => 'ASC'),
-                'fields' => array('LookupListItem.item_id', 'LookupListItem.value'),
-            ));
+            $key = "LookupListItemsByListID_" . $list_id['LookupList']['id'];
+
+            if (!$list_items = Cache::read($key))
+            {
+                $list_items = $this->LookupListItem->find('list', array(
+                    'conditions' => array(
+                        'LookupListItem.lookup_list_id' => $list_id['LookupList']['id'],
+                        'LookupListItem.public' => true,
+                    ),
+                    'order' => array('LookupListItem.display_order' => 'ASC'),
+                    'fields' => array('LookupListItem.item_id', 'LookupListItem.value'),
+                    'cache' => 'LookupListsListItems_' . $list_slug,
+                ));
+                Cache::write($key, $list_items);
+            }
         }
 
         return $list_items;
@@ -95,15 +104,22 @@ class LookupList extends LookupListsAppModel
     {
         $default = null;
 
-        $list_id = $this->find('first', array('recursive' => -1, 'fields' => 'LookupList.id', 'conditions' => array('LookupList.slug' => $list_slug)));
+        $list_id = $this->_listIdBySlug($list_slug);
 
         if ($list_id)
         {
-            $list_item = $this->LookupListItem->find('first', array(
-                'recursive' => -1,
-                'conditions' => array('LookupListItem.lookup_list_id' => $list_id['LookupList']['id'], 'LookupListItem.default' => true),
-                'fields' => array('LookupListItem.item_id'),
-            ));
+            $key = "LookupList_DefaultByListID_" . $list_id['LookupList']['id'];
+
+            if (!$list_item = Cache::read($key))
+            {
+                $list_item = $this->LookupListItem->find('first', array(
+                    'recursive' => -1,
+                    'conditions' => array('LookupListItem.lookup_list_id' => $list_id['LookupList']['id'], 'LookupListItem.default' => true),
+                    'fields' => array('LookupListItem.item_id'),
+                ));
+
+                Cache::write($key, $list_item);
+            }
 
             if ($list_item)
             {
@@ -118,7 +134,7 @@ class LookupList extends LookupListsAppModel
     {
         $item_id = null;
 
-        $list_id = $this->find('first', array('recursive' => -1, 'fields' => 'LookupList.id', 'conditions' => array('LookupList.slug' => $list_slug)));
+        $list_id = $this->_listIdBySlug($list_slug);
 
         if ($list_id)
         {
@@ -136,5 +152,20 @@ class LookupList extends LookupListsAppModel
 
         return $item_id;
     }
+
+    private function _listIdBySlug($list_slug)
+    {
+        $key = "LookupList_listIdBySlug_" . $list_slug;
+
+        if (!$list_id = Cache::read($key))
+        {
+            $list_id = $this->find('first', array('recursive' => -1, 'fields' => 'LookupList.id', 'conditions' => array('LookupList.slug' => $list_slug)));
+            Cache::write($key, $list_id);
+        }
+
+        return $list_id;
+    }
+    
+    
 
 }

@@ -116,6 +116,22 @@ class LookupListItem extends LookupListsAppModel
         return $this->validates();
     }
 
+    public function afterSave($created, $options = array())
+    {
+        parent::afterSave($created, $options);
+
+        if (isset($this->data["LookupListItem"]["lookup_list_id"]))
+        {
+            $keys = array(
+                'LookupListDefaultByListID_' . $this->data["LookupListItem"]["lookup_list_id"],
+                'LookupListItemsByListID_' . $this->data["LookupListItem"]["lookup_list_id"],
+            );
+
+            foreach ($keys as $key)
+                Cache::delete($key);
+        }
+    }
+
     public function uniquePerList($conditions)
     {
         if (isset($this->data['LookupListItem']['lookup_list_id']))
@@ -124,8 +140,8 @@ class LookupListItem extends LookupListsAppModel
                     'LookupListItem.lookup_list_id' => $this->data['LookupListItem']['lookup_list_id'],
                     'LookupListItem.slug' => $conditions['slug'],
             )));
-            
-            if($find > 0)
+
+            if ($find > 0)
                 return false;
         }
 

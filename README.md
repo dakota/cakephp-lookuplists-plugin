@@ -89,7 +89,7 @@ Changelog
 -----
 
 **0.3: ?? November 2014**
-* 
+* Added caching. Since the tables are hit often, I highly recommend that you enable caching
 
 **0.2: 3 November 2014**
 * New Interface (Using Standard Twitter Bootstrap 3.0 & jQuery)
