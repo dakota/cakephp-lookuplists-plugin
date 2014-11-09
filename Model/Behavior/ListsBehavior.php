@@ -24,7 +24,16 @@ class ListsBehavior extends ModelBehavior
         {
             foreach ($this->settings["fields"] as $field => $db_list_name)
             {
-                $list_data[$field] = $this->LookupList->find('first', array('conditions' => array('LookupList.slug' => $db_list_name)));
+
+                $key = "LookupListData_" . $model->name . "_" . $field;
+
+                if (!$list_data[$field] = Cache::read($key))
+                {
+                    $list_data[$field] = $this->LookupList->find('first', array('conditions' => array('LookupList.slug' => $db_list_name)));
+                    Cache::write($key, $list_data[$field]);
+                }
+
+                
             }
         }
 

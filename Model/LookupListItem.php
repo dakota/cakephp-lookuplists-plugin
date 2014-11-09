@@ -92,7 +92,7 @@ class LookupListItem extends LookupListsAppModel
 
         if (!isset($this->data["LookupListItem"]['slug']))
         {
-            $this->data["LookupListItem"]['slug'] = $this->slugify($this->data["LookupListItem"]['value']);
+            $this->data["LookupListItem"]['slug'] = Inflector::slug($this->data["LookupListItem"]['value']);
         }
 
         if (!isset($this->data["LookupListItem"]['item_id']))
@@ -116,6 +116,22 @@ class LookupListItem extends LookupListsAppModel
         return $this->validates();
     }
 
+    public function afterSave($created, $options = array())
+    {
+        parent::afterSave($created, $options);
+
+        if (isset($this->data["LookupListItem"]["lookup_list_id"]))
+        {
+            $keys = array(
+                'LookupListDefaultByListID_' . $this->data["LookupListItem"]["lookup_list_id"],
+                'LookupListItemsByListID_' . $this->data["LookupListItem"]["lookup_list_id"],
+            );
+
+            foreach ($keys as $key)
+                Cache::delete($key);
+        }
+    }
+
     public function uniquePerList($conditions)
     {
         if (isset($this->data['LookupListItem']['lookup_list_id']))
@@ -124,8 +140,8 @@ class LookupListItem extends LookupListsAppModel
                     'LookupListItem.lookup_list_id' => $this->data['LookupListItem']['lookup_list_id'],
                     'LookupListItem.slug' => $conditions['slug'],
             )));
-            
-            if($find > 0)
+
+            if ($find > 0)
                 return false;
         }
 
