@@ -1,7 +1,7 @@
 CakePHP Lookup Lists Plugin
 ===========================
 
-Version: 0.2
+Version: 0.3
 ------------
 
 The **Lookup Lists** plugin enables developers to create global lists that are accessible in all your models, controllers and views. This gives you a central place to manage all lists that are used in your app.
