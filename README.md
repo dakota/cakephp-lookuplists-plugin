@@ -1,7 +1,7 @@
 CakePHP Lookup Lists Plugin
 ===========================
 
-Version: 0.3
+Version: 0.4
 ------------
 
 The **Lookup Lists** plugin enables developers to create global lists that are accessible in all your models, controllers and views. This gives you a central place to manage all lists that are used in your app.
@@ -87,6 +87,9 @@ status is the field that you would like to update, and user_statuses is the list
 
 Changelog
 -----
+
+**0.4: ?? November 2014**
+* 
 
 **0.3: 9 November 2014**
 * Added caching. Since the tables are hit often, I highly recommend that you enable caching
