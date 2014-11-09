@@ -92,7 +92,7 @@ class LookupListItem extends LookupListsAppModel
 
         if (!isset($this->data["LookupListItem"]['slug']))
         {
-            $this->data["LookupListItem"]['slug'] = $this->slugify($this->data["LookupListItem"]['value']);
+            $this->data["LookupListItem"]['slug'] = Inflector::slug($this->data["LookupListItem"]['value']);
         }
 
         if (!isset($this->data["LookupListItem"]['item_id']))

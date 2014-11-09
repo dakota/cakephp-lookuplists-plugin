@@ -64,7 +64,7 @@ class LookupList extends LookupListsAppModel
 
         if (!isset($this->data["LookupList"]["slug"]))
         {
-            $this->data["LookupList"]["slug"] = $this->slugify($this->data["LookupList"]["name"]);
+            $this->data["LookupList"]["slug"] = Inflector::slug($this->data["LookupList"]["name"]);
         }
 
         return $this->validates();
