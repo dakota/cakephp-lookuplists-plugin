@@ -88,7 +88,7 @@ status is the field that you would like to update, and user_statuses is the list
 Changelog
 -----
 
-**0.3: ?? November 2014**
+**0.3: 9 November 2014**
 * Added caching. Since the tables are hit often, I highly recommend that you enable caching
 
 **0.2: 3 November 2014**
