@@ -1,0 +1,14 @@
+{
+    "name": "jacoroux/lookup-lists",
+    "description": "CakePHP Plugin that allows you to create global lists and use it throughout your app",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jaco Roux",
+            "email": "jaco@uafrica.com"
+        }
+    ],
+    "require": {
+        "cakephp/cakephp": "3.0.x-dev"
+    }
+}
