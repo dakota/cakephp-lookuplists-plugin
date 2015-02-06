@@ -1,8 +1,8 @@
 <?php
 
-namespace Controller;
+namespace LookupLists\Controller;
 
-use LookupLists\Controller\LookupListsAppController;
+use App\Controller\AppController;
 
 /**
  * LookupListItems Controller
@@ -11,7 +11,7 @@ use LookupLists\Controller\LookupListsAppController;
  * @property PaginatorComponent $Paginator
  * @property SessionComponent $Session
  */
-class LookupListItemsController extends LookupListsAppController
+class LookupListItemsController extends AppController
 {
 
     /**
@@ -19,8 +19,8 @@ class LookupListItemsController extends LookupListsAppController
      *
      * @var array
      */
-    public $components = array('Paginator', 'Session');
-    public $uses = array('LookupLists.LookupList', 'LookupLists.LookupListItem');
+    public $components = ['Paginator', 'Session'];
+    public $uses = ['LookupLists.LookupList', 'LookupLists.LookupListItem'];
 
     /**
      * add method
@@ -29,15 +29,13 @@ class LookupListItemsController extends LookupListsAppController
      */
     public function add()
     {
-
-
         if ($this->request->is('post'))
         {
             $this->LookupListItem->create();
             if ($this->LookupListItem->save($this->request->data))
             {
                 $this->Session->setFlash(__('The lookup list item has been saved.'), 'flash_notification');
-                return $this->redirect(array('controller' => 'lookup_lists', 'action' => 'edit', $this->request->data["LookupListItem"]['lookup_list_id']));
+                return $this->redirect(['controller' => 'lookup_lists', 'action' => 'edit', $this->request->data["LookupListItem"]['lookup_list_id']]);
             }
             else
             {
@@ -48,7 +46,7 @@ class LookupListItemsController extends LookupListsAppController
 
         if (!isset($this->request->query["lookup_list_id"]))
         {
-            return $this->redirect(array('controller' => 'lookup_lists', 'action' => 'index'));
+            return $this->redirect(['controller' => 'lookup_lists', 'action' => 'index']);
         }
 
         if (!$this->LookupList->exists($this->request->query["lookup_list_id"]))
@@ -57,7 +55,7 @@ class LookupListItemsController extends LookupListsAppController
         }
 
         $this->LookupListItem->recursive = -1;
-        $lookupList = $this->LookupList->find('first', array('conditions' => array('LookupList.id' => $this->request->query["lookup_list_id"])));
+        $lookupList = $this->LookupList->find('first', ['conditions' => ['LookupList.id' => $this->request->query["lookup_list_id"]]]);
 
         //debug($lookupList);
         //$lookupLists = $this->LookupListItem->LookupList->find('list');
@@ -77,12 +75,12 @@ class LookupListItemsController extends LookupListsAppController
         {
             throw new NotFoundException(__('Invalid lookup list item'));
         }
-        if ($this->request->is(array('post', 'put')))
+        if ($this->request->is(['post', 'put']))
         {
             if ($this->LookupListItem->save($this->request->data))
             {
                 $this->Session->setFlash(__('The lookup list item has been saved.'), 'flash_notification');
-                return $this->redirect(array('controller' => 'lookup_lists', 'action' => 'edit', $this->request->data["LookupListItem"]['lookup_list_id']));
+                return $this->redirect(['controller' => 'lookup_lists', 'action' => 'edit', $this->request->data["LookupListItem"]['lookup_list_id']]);
             }
             else
             {
@@ -92,7 +90,7 @@ class LookupListItemsController extends LookupListsAppController
         }
         else
         {
-            $options = array('conditions' => array('LookupListItem.' . $this->LookupListItem->primaryKey => $id));
+            $options = ['conditions' => ['LookupListItem.' . $this->LookupListItem->primaryKey => $id]];
             $this->request->data = $this->LookupListItem->find('first', $options);
         }
         $lookupLists = $this->LookupListItem->LookupList->find('list');
@@ -108,7 +106,7 @@ class LookupListItemsController extends LookupListsAppController
      */
     public function delete($id = null)
     {
-        $lookup_list = $this->LookupListItem->find('first', array('conditions' => array('LookupListItem.id' => $id)));
+        $lookup_list = $this->LookupListItem->find('first', ['conditions' => ['LookupListItem.id' => $id]]);
 
         $list_id = null;
 
@@ -133,7 +131,7 @@ class LookupListItemsController extends LookupListsAppController
 
 
 
-        return $this->redirect(array('controller' => 'lookup_lists', 'action' => 'edit', $list_id));
+        return $this->redirect(['controller' => 'lookup_lists', 'action' => 'edit', $list_id]);
     }
 
 }

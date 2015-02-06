@@ -1,17 +1,17 @@
 <?php
 
-namespace Model;
+namespace LookupLists\Model\Table;
 
 use Cake\Cache\Cache;
+use Cake\ORM\Table;
 use Cake\Utility\Inflector;
-use LookupLists\Model\LookupListsAppModel;
 
 /**
  * LookupListItem Model
  *
  * @property LookupList $LookupList
  */
-class LookupListItem extends LookupListsAppModel
+class LookupListItemsTable extends Table
 {
 
     /**
@@ -26,73 +26,73 @@ class LookupListItem extends LookupListsAppModel
      *
      * @var array
      */
-    public $validate = array(
-        'lookup_list_id' => array(
-            'numeric' => array(
-                'rule' => array('numeric'),
-            ),
-        ),
-        'item_id' => array(
-            'numeric' => array(
-                'rule' => array('numeric'),
-            ),
-        ),
-        'slug' => array(
-            'notEmpty' => array(
-                'rule' => array('notEmpty'),
+    public $validate = [
+        'lookup_list_id' => [
+            'numeric' => [
+                'rule' => ['numeric'],
+            ],
+        ],
+        'item_id' => [
+            'numeric' => [
+                'rule' => ['numeric'],
+            ],
+        ],
+        'slug' => [
+            'notEmpty' => [
+                'rule' => ['notEmpty'],
                 'on' => 'create', // Limit validation to 'create' or 'update' operations
-            ),
-            'uniquePerList' => array(
-                'rule' => array('uniquePerList'),
+            ],
+            'uniquePerList' => [
+                'rule' => ['uniquePerList'],
                 'message' => 'List slug must be unique',
                 'on' => 'create',
-            ),
-        ),
-        'value' => array(
-            'notEmpty' => array(
-                'rule' => array('notEmpty'),
-            ),
-        ),
-        'display_order' => array(
-            'numeric' => array(
-                'rule' => array('numeric'),
-            ),
-        ),
-        'default' => array(
-            'boolean' => array(
-                'rule' => array('boolean'),
-            ),
-        ),
-        'public' => array(
-            'boolean' => array(
-                'rule' => array('boolean'),
-            ),
-        ),
-    );
+            ],
+        ],
+        'value' => [
+            'notEmpty' => [
+                'rule' => ['notEmpty'],
+            ],
+        ],
+        'display_order' => [
+            'numeric' => [
+                'rule' => ['numeric'],
+            ],
+        ],
+        'default' => [
+            'boolean' => [
+                'rule' => ['boolean'],
+            ],
+        ],
+        'public' => [
+            'boolean' => [
+                'rule' => ['boolean'],
+            ],
+        ],
+    ];
 
     /**
      * belongsTo associations
      *
      * @var array
      */
-    public $belongsTo = array(
-        'LookupList' => array(
+    public $belongsTo = [
+        'LookupList' => [
             'className' => 'LookupList',
             'foreignKey' => 'lookup_list_id',
             'conditions' => '',
             'fields' => '',
             'order' => ''
-        )
-    );
+        ]
+    ];
 
-    public function beforeSave($options = array())
+    public function beforeSave($options = [])
     {
         parent::beforeSave($options);
 
-        $list_values = $this->find('first', array(
-            'conditions' => array('LookupListItem.lookup_list_id' => $this->data["LookupListItem"]['lookup_list_id']),
-            'fields' => array('max(item_id)+1 as new_item_id', 'max(display_order)+1 as new_display_order'),
-        ));
+        $list_values = $this->find('first', [
+            'conditions' => ['LookupListItem.lookup_list_id' => $this->data["LookupListItem"]['lookup_list_id']],
+            'fields' => ['max(item_id)+1 as new_item_id', 'max(display_order)+1 as new_display_order'],
+        ]);
         
         if (!isset($this->data["LookupListItem"]['slug']))
         {
@@ -113,23 +113,23 @@ class LookupListItem extends LookupListsAppModel
         {
             if ($this->data["LookupListItem"]['default'])
             {
-                $this->updateAll(array("LookupListItem.default" => false), array('LookupListItem.lookup_list_id' => $this->data["LookupListItem"]['lookup_list_id']));
+                $this->updateAll(["LookupListItem.default" => false], ['LookupListItem.lookup_list_id' => $this->data["LookupListItem"]['lookup_list_id']]);
             }
         }
 
         return $this->validates();
     }
 
-    public function afterSave($created, $options = array())
+    public function afterSave($created, $options = [])
     {
         parent::afterSave($created, $options);
 
         if (isset($this->data["LookupListItem"]["lookup_list_id"]))
         {
-            $keys = array(
+            $keys = [
                 'LookupListDefaultByListID_' . $this->data["LookupListItem"]["lookup_list_id"],
                 'LookupListItemsByListID_' . $this->data["LookupListItem"]["lookup_list_id"],
-            );
+            ];
 
             foreach ($keys as $key)
                 Cache::delete($key);
@@ -140,10 +140,10 @@ class LookupListItem extends LookupListsAppModel
     {
         if (isset($this->data['LookupListItem']['lookup_list_id']))
         {
-            $find = $this->find('count', array('conditions' => array(
+            $find = $this->find('count', ['conditions' => [
                     'LookupListItem.lookup_list_id' => $this->data['LookupListItem']['lookup_list_id'],
                     'LookupListItem.slug' => $conditions['slug'],
-            )));
+            ]]);
 
             if ($find > 0)
                 return false;

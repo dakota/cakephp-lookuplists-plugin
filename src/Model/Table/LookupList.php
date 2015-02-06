@@ -1,16 +1,16 @@
 <?php
 
-namespace Model;
+namespace LookupLists\Model\Table;
 
 use Cake\Cache\Cache;
+use Cake\ORM\Table;
 use Cake\Utility\Inflector;
-use LookupLists\Model\LookupListsAppModel;
 
 /**
  * LookupList Model
  *
  */
-class LookupList extends LookupListsAppModel
+class LookupListsTable extends Table
 {
 
     /**
@@ -25,44 +25,44 @@ class LookupList extends LookupListsAppModel
      *
      * @var array
      */
-    public $validate = array(
-        'slug' => array(
-            'notEmpty' => array(
-                'rule' => array('notEmpty'),
+    public $validate = [
+        'slug' => [
+            'notEmpty' => [
+                'rule' => ['notEmpty'],
                 'message' => 'slug is required',
                 'allowEmpty' => false,
                 'required' => false,
-            ),
-            'unique' => array(
+            ],
+            'unique' => [
                 'rule' => 'isUnique',
                 'message' => 'List name needs to be Unique',
-            ),
-        ),
-        'name' => array(
-            'notEmpty' => array(
-                'rule' => array('notEmpty'),
+            ],
+        ],
+        'name' => [
+            'notEmpty' => [
+                'rule' => ['notEmpty'],
                 'message' => 'List Name is required',
                 'required' => true,
                 'on' => 'create',
-            ),
-        ),
-        'public' => array(
-            'boolean' => array(
-                'rule' => array('boolean'),
-            ),
-        ),
-    );
-    public $hasMany = array(
-        'LookupListItem' => array(
+            ],
+        ],
+        'public' => [
+            'boolean' => [
+                'rule' => ['boolean'],
+            ],
+        ],
+    ];
+    public $hasMany = [
+        'LookupListItem' => [
             'className' => 'LookupListItem',
             'foreignKey' => 'lookup_list_id',
             'order' => 'LookupListItem.display_order',
             'counterCache' => true,
             'dependent' => true,
-        )
-    );
+        ]
+    ];
 
-    public function beforeSave($options = array())
+    public function beforeSave($options = [])
     {
         parent::beforeSave($options);
 
@@ -80,7 +80,7 @@ class LookupList extends LookupListsAppModel
 
         $list_id = $this->_listIdBySlug($list_slug);
 
-        $list_items = array();
+        $list_items = [];
 
         if ($list_id)
         {
@@ -88,15 +88,15 @@ class LookupList extends LookupListsAppModel
 
             if (!$list_items = Cache::read($key))
             {
-                $list_items = $this->LookupListItem->find('list', array(
-                    'conditions' => array(
+                $list_items = $this->LookupListItem->find('list', [
+                    'conditions' => [
                         'LookupListItem.lookup_list_id' => $list_id['LookupList']['id'],
                         'LookupListItem.public' => true,
-                    ),
-                    'order' => array('LookupListItem.display_order' => 'ASC'),
-                    'fields' => array('LookupListItem.item_id', 'LookupListItem.value'),
+                    ],
+                    'order' => ['LookupListItem.display_order' => 'ASC'],
+                    'fields' => ['LookupListItem.item_id', 'LookupListItem.value'],
                     'cache' => 'LookupListsListItems_' . $list_slug,
-                ));
+                ]);
                 Cache::write($key, $list_items);
             }
         }
@@ -119,20 +119,20 @@ class LookupList extends LookupListsAppModel
 
         if (!$list_item = Cache::read($key))
         {
-            $list_item = $this->LookupListItem->find('first', array(
+            $list_item = $this->LookupListItem->find('first', [
                 'recursive' => -1,
-                'conditions' => array('LookupListItem.lookup_list_id' => $list_id['LookupList']['id'], 'LookupListItem.default' => true),
-                'fields' => array('LookupListItem.item_id'),
-            ));
+                'conditions' => ['LookupListItem.lookup_list_id' => $list_id['LookupList']['id'], 'LookupListItem.default' => true],
+                'fields' => ['LookupListItem.item_id'],
+            ]);
 
             if (!$list_item)
             {
-                $list_item = $this->LookupListItem->find('first', array(
+                $list_item = $this->LookupListItem->find('first', [
                     'recursive' => -1,
-                    'conditions' => array('LookupListItem.lookup_list_id' => $list_id['LookupList']['id']),
-                    'fields' => array('LookupListItem.item_id'),
-                    'order' => array('LookupListItem.item_id' => 'ASC'),
-                ));
+                    'conditions' => ['LookupListItem.lookup_list_id' => $list_id['LookupList']['id']],
+                    'fields' => ['LookupListItem.item_id'],
+                    'order' => ['LookupListItem.item_id' => 'ASC'],
+                ]);
             }
 
             Cache::write($key, $list_item);
@@ -155,11 +155,11 @@ class LookupList extends LookupListsAppModel
 
         if ($list_id)
         {
-            $list_item = $this->LookupListItem->find('first', array(
+            $list_item = $this->LookupListItem->find('first', [
                 'recursive' => -1,
-                'conditions' => array('LookupListItem.lookup_list_id' => $list_id['LookupList']['id'], 'LookupListItem.slug like ' => $slug),
-                'fields' => array('LookupListItem.item_id'),
-            ));
+                'conditions' => ['LookupListItem.lookup_list_id' => $list_id['LookupList']['id'], 'LookupListItem.slug like ' => $slug],
+                'fields' => ['LookupListItem.item_id'],
+            ]);
 
             if ($list_item)
             {
@@ -176,7 +176,7 @@ class LookupList extends LookupListsAppModel
 
         if (!$list_id = Cache::read($key))
         {
-            $list_id = $this->find('first', array('recursive' => -1, 'fields' => 'LookupList.id', 'conditions' => array('LookupList.slug' => $list_slug)));
+            $list_id = $this->find('first', ['recursive' => -1, 'fields' => 'LookupList.id', 'conditions' => ['LookupList.slug' => $list_slug]]);
             Cache::write($key, $list_id);
         }
 

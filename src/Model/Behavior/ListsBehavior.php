@@ -1,21 +1,21 @@
 <?php
 
-namespace Model\Behavior;
+namespace LookupLists\Model\Behavior;
 
 use Cake\Cache\Cache;
 use Cake\Model\Behavior;
 use Cake\Model\Model;
 
-class ListsBehavior extends ModelBehavior
+class ListsBehavior extends Behavior
 {
 
     public $settings;
 
-    public function setup(\Model $model, $config = array())
+    public function setup(\Model $model, $config = [])
     {
         parent::setup($model, $config);
 
-        $this->settings[$model->name] = array_merge(array('show_display_field' => true), $config);
+        $this->settings[$model->name] = array_merge(['show_display_field' => true], $config);
     }
 
     public function afterFind(\Model $model, $results, $primary = false)
@@ -24,7 +24,7 @@ class ListsBehavior extends ModelBehavior
         parent::afterFind($model, $results, $primary);
 
         $this->LookupList = ClassRegistry::init('LookupLists.LookupList');
-        $list_data = array();
+        $list_data = [];
 
         //debug($this->settings[$model->name]);
 
@@ -58,7 +58,7 @@ class ListsBehavior extends ModelBehavior
                 if (!$list_data[$field] = Cache::read($key))
                 {
 
-                    $list_data[$field] = $this->LookupList->find('first', array('recursive' => 1, 'conditions' => array('LookupList.slug' => $list_name)));
+                    $list_data[$field] = $this->LookupList->find('first', ['recursive' => 1, 'conditions' => ['LookupList.slug' => $list_name]]);
                     Cache::write($key, $list_data[$field]);
                 }
             }
@@ -123,7 +123,7 @@ class ListsBehavior extends ModelBehavior
         return $results;
     }
 
-    public function beforeSave(\Model $model, $options = array())
+    public function beforeSave(\Model $model, $options = [])
     {
         parent::beforeSave($model, $options);
 

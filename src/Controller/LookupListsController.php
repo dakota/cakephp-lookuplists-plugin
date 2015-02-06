@@ -1,8 +1,8 @@
 <?php
 
-namespace Controller;
+namespace LookupLists\Controller;
 
-use LookupLists\Controller\LookupListsAppController;
+use App\Controller\AppController;
 
 /**
  * LookupLists Controller
@@ -11,7 +11,7 @@ use LookupLists\Controller\LookupListsAppController;
  * @property PaginatorComponent $Paginator
  * @property SessionComponent $Session
  */
-class LookupListsController extends LookupListsAppController
+class LookupListsController extends AppController
 {
 
     /**
@@ -19,7 +19,7 @@ class LookupListsController extends LookupListsAppController
      *
      * @var array
      */
-    public $components = array('Paginator', 'Session');
+    public $components = ['Paginator'];
 
     /**
      * index method
@@ -30,9 +30,9 @@ class LookupListsController extends LookupListsAppController
     {
         $this->LookupList->recursive = 0;
 
-        $this->Paginator->settings = array(
-            'order' => array('LookupList.name' => 'ASC'),
-        );
+        $this->Paginator->settings = [
+            'order' => ['LookupList.name' => 'ASC'],
+        ];
 
         $lookupLists = $this->Paginator->paginate();
 
@@ -52,7 +52,7 @@ class LookupListsController extends LookupListsAppController
             if ($this->LookupList->save($this->request->data))
             {
                 $this->Session->setFlash(__('The lookup list has been saved.'), 'flash_notification');
-                return $this->redirect(array('action' => 'index'));
+                return $this->redirect(['action' => 'index']);
             }
             else
             {
@@ -74,12 +74,12 @@ class LookupListsController extends LookupListsAppController
         {
             throw new NotFoundException(__('Invalid lookup list'));
         }
-        if ($this->request->is(array('post', 'put')))
+        if ($this->request->is(['post', 'put']))
         {
             if ($this->LookupList->save($this->request->data))
             {
                 $this->Session->setFlash(__('The lookup list has been saved.'), 'flash_notification');
-                return $this->redirect(array('action' => 'edit', $id));
+                return $this->redirect(['action' => 'edit', $id]);
             }
             else
             {
@@ -88,10 +88,10 @@ class LookupListsController extends LookupListsAppController
         }
         else
         {
-            $options = array('recursive' => 1, 'conditions' => array('LookupList.' . $this->LookupList->primaryKey => $id));
+            $options = ['recursive' => 1, 'conditions' => ['LookupList.' . $this->LookupList->primaryKey => $id]];
             $this->request->data = $this->LookupList->find('first', $options);
         }
-        $options = array('recursive' => 1, 'conditions' => array('LookupList.' . $this->LookupList->primaryKey => $id));
+        $options = ['recursive' => 1, 'conditions' => ['LookupList.' . $this->LookupList->primaryKey => $id]];
         $this->set('lookupList', $this->LookupList->find('first', $options));
     }
 
@@ -118,7 +118,7 @@ class LookupListsController extends LookupListsAppController
         {
             $this->Session->setFlash(__('The lookup list could not be deleted. Please, try again.'), 'flash_error');
         }
-        return $this->redirect(array('action' => 'index'));
+        return $this->redirect(['action' => 'index']);
     }
 
     //## Download a json file with all available list data
