@@ -3,19 +3,28 @@
 namespace LookupLists\Model\Behavior;
 
 use Cake\Cache\Cache;
-use Cake\Model\Behavior;
-use Cake\Model\Model;
+use Cake\Event\Event;
+use Cake\ORM\Behavior;
+use Cake\ORM\Entity;
+use Cake\ORM\TableRegistry;
+use Cake\Utility\Hash;
 
 class ListsBehavior extends Behavior
 {
 
-    public $settings;
+    protected $_defaultConfig = [
+        'show_display_field' => true,
+        'fields' => [],
+    ];
 
-    public function setup(\Model $model, $config = [])
+    /**
+     * @var \LookupLists\Model\Table\LookupListsTable
+     */
+    protected $_LookupLists ;
+
+    public function initialize(array $config)
     {
-        parent::setup($model, $config);
-
-        $this->settings[$model->name] = array_merge(['show_display_field' => true], $config);
+        $this->_LookupLists = TableRegistry::get('LookupLists.LookupLists');
     }
 
     public function afterFind(\Model $model, $results, $primary = false)
@@ -123,67 +132,61 @@ class ListsBehavior extends Behavior
         return $results;
     }
 
-    public function beforeSave(\Model $model, $options = [])
+    public function beforeSave(Event $event, Entity $entity)
     {
-        parent::beforeSave($model, $options);
-
-        $fields = Hash::extract($this->settings[$model->name], "fields.{s}.slug_field");
+        $fields = Hash::extract($this->_config, "fields.{s}.slug_field");
 
         foreach ($fields as $field)
         {
-            if (isset($model->data[$model->name][$field]))
+            if (isset($entity->{$field}))
             {
-                $db_field_name = $this->_extract_field_from_slug_name($model, $field);
-                $value = $model->data[$model->name][$field];
-                $db_id = $this->getLookupListItemId($model, $db_field_name, $value);
-                $model->data[$model->name][$db_field_name] = $db_id;
-                unset($model->data[$model->name][$field]);
+                $db_field_name = $this->_extractFieldFromSlugName($field);
+                $value = $entity->{$field};
+                $db_id = $this->getLookupListItemId($db_field_name, $value);
+                $entity->{$db_field_name} = $db_id;
+                unset($entity->{$field});
             }
         }
         return true;
     }
 
-    public function getLookupListItemId(\Model $model, $field, $item_slug)
+    public function getLookupListItemId($field, $item_slug)
     {
-        $this->LookupList = ClassRegistry::init('LookupLists.LookupList');
-
         $list_slug = null;
 
-        if (isset($this->settings[$model->name]['fields'][$field]['list']))
+        if (isset($this->_config['fields'][$field]['list']))
         {
-            $list_slug = $this->settings[$model->name]['fields'][$field]['list'];
+            $list_slug = $this->_config['fields'][$field]['list'];
         }
 
         if ($list_slug)
         {
-            return $this->LookupList->getItemId($list_slug, $item_slug);
+            return $this->_LookupLists->getItemId($list_slug, $item_slug);
         }
 
         return null;
     }
 
-    public function getLookupListDefault(\Model $model, $field)
+    public function getLookupListDefault($field)
     {
-        $this->LookupList = ClassRegistry::init('LookupLists.LookupList');
-
         $list_slug = null;
         
-        if (isset($this->settings[$model->name]['fields'][$field]['list']))
+        if (isset($this->_config['fields'][$field]['list']))
         {
-            $list_slug = $this->settings[$model->name]['fields'][$field]['list'];
+            $list_slug = $this->_config['fields'][$field]['list'];
         }
 
         if ($list_slug)
         {
-            return $this->LookupList->getDefault($list_slug);
+            return $this->_LookupLists->getDefault($list_slug);
         }
 
         return null;
     }
 
-    private function _extract_field_from_slug_name(\Model $model, $slug)
+    protected function _extractFieldFromSlugName($slug)
     {
-        foreach ($this->settings[$model->name]['fields'] as $key => $field)
+        foreach ($this->_config['fields'] as $key => $field)
         {
             if (!isset($field['slug_field']))
             {

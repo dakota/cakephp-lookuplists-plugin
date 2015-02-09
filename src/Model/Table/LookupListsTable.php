@@ -52,15 +52,13 @@ class LookupListsTable extends Table
             ],
         ],
     ];
-    public $hasMany = [
-        'LookupListItem' => [
-            'className' => 'LookupListItem',
-            'foreignKey' => 'lookup_list_id',
-            'order' => 'LookupListItem.display_order',
-            'counterCache' => true,
-            'dependent' => true,
-        ]
-    ];
+
+    public function initialize(array $options = [])
+    {
+        $this->hasMany('LookupListItems');
+
+        parent::initialize($options);
+    }
 
     public function beforeSave($options = [])
     {
@@ -88,7 +86,7 @@ class LookupListsTable extends Table
 
             if (!$list_items = Cache::read($key))
             {
-                $list_items = $this->LookupListItem->find('list', [
+                $list_items = $this->LookupListItems->find('list', [
                     'conditions' => [
                         'LookupListItem.lookup_list_id' => $list_id['LookupList']['id'],
                         'LookupListItem.public' => true,
@@ -115,34 +113,42 @@ class LookupListsTable extends Table
             return $default;
         }
 
-        $key = "LookupList_DefaultByListID_" . $list_id['LookupList']['id'];
+        $key = "LookupList_DefaultByListID_" . $list_id;
 
-        if (!$list_item = Cache::read($key))
-        {
-            $list_item = $this->LookupListItem->find('first', [
-                'recursive' => -1,
-                'conditions' => ['LookupListItem.lookup_list_id' => $list_id['LookupList']['id'], 'LookupListItem.default' => true],
-                'fields' => ['LookupListItem.item_id'],
-            ]);
+        $list_item = Cache::remember($key, function () use ($list_id) {
+            $list_item = $this->LookupListItems
+                ->find()
+                ->select([
+                    'LookupListItems.item_id'
+                ])
+                ->where([
+                    'LookupListItems.lookup_list_id' => $list_id,
+                    'LookupListItems.default' => true
+                ])
+                ->first();
 
-            if (!$list_item)
-            {
-                $list_item = $this->LookupListItem->find('first', [
-                    'recursive' => -1,
-                    'conditions' => ['LookupListItem.lookup_list_id' => $list_id['LookupList']['id']],
-                    'fields' => ['LookupListItem.item_id'],
-                    'order' => ['LookupListItem.item_id' => 'ASC'],
-                ]);
+            if (!$list_item) {
+                $list_item = $this->LookupListItems
+                    ->find()
+                    ->select([
+                        'LookupListItems.item_id'
+                    ])
+                    ->where([
+                        'LookupListItems.lookup_list_id' => $list_id,
+                    ])
+                    ->order([
+                        'LookupListItems.item_id' => 'ASC'
+                    ])
+                    ->first();
             }
 
-            Cache::write($key, $list_item);
-        }
+            return $list_item;
+        });
 
         if ($list_item)
         {
-            return $list_item["LookupListItem"]["item_id"];
+            return $list_item->item_id;
         }
-
 
         return $default;
     }
@@ -155,15 +161,18 @@ class LookupListsTable extends Table
 
         if ($list_id)
         {
-            $list_item = $this->LookupListItem->find('first', [
-                'recursive' => -1,
-                'conditions' => ['LookupListItem.lookup_list_id' => $list_id['LookupList']['id'], 'LookupListItem.slug like ' => $slug],
-                'fields' => ['LookupListItem.item_id'],
-            ]);
+            $list_item = $this->LookupListItems
+                ->find()
+                ->select(['LookupListItems.item_id'])
+                ->where([
+                    'LookupListItems.lookup_list_id' => $list_id,
+                    'LookupListItems.slug like ' => $slug
+                ])
+                ->first();
 
             if ($list_item)
             {
-                return $list_item["LookupListItem"]["item_id"];
+                return $list_item->item_id;
             }
         }
 
@@ -174,13 +183,18 @@ class LookupListsTable extends Table
     {
         $key = "LookupList_listIdBySlug_" . $list_slug;
 
-        if (!$list_id = Cache::read($key))
-        {
-            $list_id = $this->find('first', ['recursive' => -1, 'fields' => 'LookupList.id', 'conditions' => ['LookupList.slug' => $list_slug]]);
-            Cache::write($key, $list_id);
-        }
+        $list_id = $this->find()
+            ->select([
+                'LookupLists.id'
+            ])
+            ->where([
+                'LookupLists.slug' => $list_slug
+            ])
+            ->cache($key)
+            ->first();
 
-        return $list_id;
+
+        return $list_id->id;
     }
 
 }
