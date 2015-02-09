@@ -138,10 +138,10 @@ class ListsBehavior extends Behavior
 
         foreach ($fields as $field)
         {
-            if (isset($entity->{$field}))
+            $value = $entity->{$field};
+            if (isset($value))
             {
                 $db_field_name = $this->_extractFieldFromSlugName($field);
-                $value = $entity->{$field};
                 $db_id = $this->getLookupListItemId($db_field_name, $value);
                 $entity->{$db_field_name} = $db_id;
                 unset($entity->{$field});
