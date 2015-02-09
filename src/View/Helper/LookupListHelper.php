@@ -2,19 +2,20 @@
 
 namespace LookupLists\View\Helper;
 
+use Cake\ORM\TableRegistry;
 use Cake\View\Helper;
 
 class LookupListHelper extends Helper
 {
 
-    public $helpers = ['Html', 'Form'];
+    public $helpers = ['Form'];
 
     public function makeList($field, $list_slug, $options = [])
     {
-        $this->LookupList = ClassRegistry::init('LookupLists.LookupList');
+        $lookup_lists = TableRegistry::get('LookupLists.LookupLists');
 
-        $list = $this->LookupList->listItems($list_slug);
-        $default = $this->LookupList->getDefault($list_slug);
+        $list = $lookup_lists->find('items', ['list_slug' => $list_slug]);
+        $default = $lookup_lists->getDefault($list_slug);
         
         $field_options = array_merge(['options' => $list, 'default' => $default], $options);
         //debug($field_options);exit;

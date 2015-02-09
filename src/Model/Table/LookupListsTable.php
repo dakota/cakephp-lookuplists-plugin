@@ -3,6 +3,7 @@
 namespace LookupLists\Model\Table;
 
 use Cake\Cache\Cache;
+use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
@@ -72,8 +73,14 @@ class LookupListsTable extends Table
         return $this->validates();
     }
 
-    public function listItems($list_slug)
+    public function findItems(Query $query, array $options = [])
     {
+        if (empty($options['list_slug'])) {
+            return false;
+        }
+
+        $list_slug = $options['list_slug'];
+
         $key = "LookupListIDbySlug_" . $list_slug;
 
         $list_id = $this->_listIdBySlug($list_slug);
@@ -84,19 +91,20 @@ class LookupListsTable extends Table
         {
             $key = "LookupListItemsByListID_" . $list_id['LookupList']['id'];
 
-            if (!$list_items = Cache::read($key))
-            {
-                $list_items = $this->LookupListItems->find('list', [
-                    'conditions' => [
-                        'LookupListItem.lookup_list_id' => $list_id['LookupList']['id'],
-                        'LookupListItem.public' => true,
-                    ],
-                    'order' => ['LookupListItem.display_order' => 'ASC'],
-                    'fields' => ['LookupListItem.item_id', 'LookupListItem.value'],
-                    'cache' => 'LookupListsListItems_' . $list_slug,
-                ]);
-                Cache::write($key, $list_items);
-            }
+            $list_items = $this->LookupListItems->find('list', [
+                'idField' => 'item_id',
+                'valueField' => 'value',
+            ])
+            ->select([
+                'LookupListItems.item_id',
+                'LookupListItems.value'
+            ])
+            ->where([
+                'LookupListItems.lookup_list_id' => $list_id,
+                'LookupListItems.public' => true,
+            ])
+            ->order(['LookupListItems.display_order' => 'ASC'])
+            ->cache($key);
         }
 
         return $list_items;
