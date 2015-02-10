@@ -3,6 +3,8 @@
 namespace LookupLists\Model\Table;
 
 use Cake\Cache\Cache;
+use Cake\Event\Event;
+use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
@@ -13,13 +15,6 @@ use Cake\Utility\Inflector;
  */
 class LookupListItemsTable extends Table
 {
-
-    /**
-     * Display field
-     *
-     * @var string
-     */
-    public $displayField = 'value';
 
     /**
      * Validation rules
@@ -70,65 +65,64 @@ class LookupListItemsTable extends Table
         ],
     ];
 
-    /**
-     * belongsTo associations
-     *
-     * @var array
-     */
-    public $belongsTo = [
-        'LookupList' => [
-            'className' => 'LookupList',
-            'foreignKey' => 'lookup_list_id',
-            'conditions' => '',
-            'fields' => '',
-            'order' => ''
-        ]
-    ];
-
-    public function beforeSave($options = [])
+    public function initialize(array $options = [])
     {
-        parent::beforeSave($options);
+        $this->belongsTo('LookupLists');
+        $this->displayField('value');
 
-        $list_values = $this->find('first', [
-            'conditions' => ['LookupListItem.lookup_list_id' => $this->data["LookupListItem"]['lookup_list_id']],
-            'fields' => ['max(item_id)+1 as new_item_id', 'max(display_order)+1 as new_display_order'],
-        ]);
-        
-        if (!isset($this->data["LookupListItem"]['slug']))
-        {
-            $this->data["LookupListItem"]['slug'] = Inflector::slug(strtolower($this->data["LookupListItem"]['value']), "-");
-        }
-
-        if (!isset($this->data["LookupListItem"]['item_id']))
-        {
-            $this->data["LookupListItem"]['item_id'] = !is_null($list_values[0]['new_item_id']) ? $list_values[0]['new_item_id'] : 1;
-        }
-
-        if (!isset($this->data["LookupListItem"]['display_order']))
-        {
-            $this->data["LookupListItem"]['display_order'] = !is_null($list_values[0]['new_display_order']) ? $list_values[0]['new_display_order'] : 1;
-        }
-
-        if (isset($this->data["LookupListItem"]['default']))
-        {
-            if ($this->data["LookupListItem"]['default'])
-            {
-                $this->updateAll(["LookupListItem.default" => false], ['LookupListItem.lookup_list_id' => $this->data["LookupListItem"]['lookup_list_id']]);
-            }
-        }
-
-        return $this->validates();
+        parent::initialize($options);
     }
 
-    public function afterSave($created, $options = [])
-    {
-        parent::afterSave($created, $options);
 
-        if (isset($this->data["LookupListItem"]["lookup_list_id"]))
+    public function beforeSave(Event $event, Entity $entity)
+    {
+        $list_values = $this->find();
+        $list_values = $list_values
+            ->select([
+                'new_item_id' => $list_values->func()->max('item_id'),
+                'new_display_order' => $list_values->func()->max('display_order')
+            ])
+            ->where([
+                'LookupListItems.lookup_list_id' => $entity->lookup_list_id
+            ])
+            ->hydrate(false)
+            ->first();
+
+        if (!isset($entity->slug))
+        {
+            $entity->slug = Inflector::slug(strtolower($entity->value), "-");
+        }
+
+        if (!isset($entity->item_id))
+        {
+            $entity->item_id = !is_null($list_values['new_item_id']) ? $list_values['new_item_id'] + 1 : 1;
+        }
+
+        if (!isset($entity->display_order))
+        {
+            $entity->display_order = !is_null($list_values['new_display_order']) ? $list_values['new_display_order'] + 1 : 1;
+        }
+
+        if (isset($entity->default) && $entity->default)
+        {
+            $this->updateAll(
+                [
+                  'default' => false
+                ],
+                [
+                    'lookup_list_id' => $entity->lookup_list_id
+                ]
+            );
+        }
+    }
+
+    public function afterSave(Event $event, Entity $entity)
+    {
+        if (isset($entity->lookup_list_id))
         {
             $keys = [
-                'LookupListDefaultByListID_' . $this->data["LookupListItem"]["lookup_list_id"],
-                'LookupListItemsByListID_' . $this->data["LookupListItem"]["lookup_list_id"],
+                'LookupListDefaultByListID_' . $entity->lookup_list_id,
+                'LookupListItemsByListID_' . $entity->lookup_list_id,
             ];
 
             foreach ($keys as $key)
@@ -141,8 +135,8 @@ class LookupListItemsTable extends Table
         if (isset($this->data['LookupListItem']['lookup_list_id']))
         {
             $find = $this->find('count', ['conditions' => [
-                    'LookupListItem.lookup_list_id' => $this->data['LookupListItem']['lookup_list_id'],
-                    'LookupListItem.slug' => $conditions['slug'],
+                    'LookupListItems.lookup_list_id' => $this->data['LookupListItem']['lookup_list_id'],
+                    'LookupListItems.slug' => $conditions['slug'],
             ]]);
 
             if ($find > 0)

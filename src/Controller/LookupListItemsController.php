@@ -3,6 +3,9 @@
 namespace LookupLists\Controller;
 
 use App\Controller\AppController;
+use Cake\Datasource\ConnectionManager;
+use Cake\Event\Event;
+use Crud\Controller\ControllerTrait;
 
 /**
  * LookupListItems Controller
@@ -14,13 +17,38 @@ use App\Controller\AppController;
 class LookupListItemsController extends AppController
 {
 
+    use ControllerTrait;
+
     /**
      * Components
      *
      * @var array
      */
-    public $components = ['Paginator', 'Session'];
-    public $uses = ['LookupLists.LookupList', 'LookupLists.LookupListItem'];
+    public $components = [
+        'Crud.Crud' => [
+            'actions' => [
+                'Crud.Add',
+                'Crud.Edit',
+                'Crud.Delete'
+            ]
+        ]
+    ];
+
+    public function beforeFilter(Event $event)
+    {
+        parent::beforeFilter($event);
+
+        $this->Crud->on(
+            'Crud.beforeRedirect',
+            function (Event $event) {
+                $event->subject->url = [
+                    'controller' => 'LookupLists',
+                    'action' => 'edit',
+                    $this->request->query["lookup_list_id"]
+                ];
+            }
+        );
+    }
 
     /**
      * add method
@@ -29,37 +57,16 @@ class LookupListItemsController extends AppController
      */
     public function add()
     {
-        if ($this->request->is('post'))
-        {
-            $this->LookupListItem->create();
-            if ($this->LookupListItem->save($this->request->data))
-            {
-                $this->Session->setFlash(__('The lookup list item has been saved.'), 'flash_notification');
-                return $this->redirect(['controller' => 'lookup_lists', 'action' => 'edit', $this->request->data["LookupListItem"]['lookup_list_id']]);
-            }
-            else
-            {
-                $this->Session->setFlash(__('The lookup list item could not be saved. Please, try again.'), 'flash_error');
-            }
-        }
-
-
-        if (!isset($this->request->query["lookup_list_id"]))
-        {
+        if (!isset($this->request->query["lookup_list_id"])) {
             return $this->redirect(['controller' => 'lookup_lists', 'action' => 'index']);
         }
 
-        if (!$this->LookupList->exists($this->request->query["lookup_list_id"]))
-        {
-            throw new NotFoundException(__('Invalid lookup list'));
-        }
+        $lookupList = $this->LookupListItems->LookupLists->get($this->request->query["lookup_list_id"]);
 
-        $this->LookupListItem->recursive = -1;
-        $lookupList = $this->LookupList->find('first', ['conditions' => ['LookupList.id' => $this->request->query["lookup_list_id"]]]);
-
-        //debug($lookupList);
-        //$lookupLists = $this->LookupListItem->LookupList->find('list');
         $this->set(compact('lookupList'));
+
+        ConnectionManager::get('default')->driver()->autoQuoting(true);
+        return $this->Crud->execute();
     }
 
     /**
@@ -71,67 +78,10 @@ class LookupListItemsController extends AppController
      */
     public function edit($id = null)
     {
-        if (!$this->LookupListItem->exists($id))
-        {
-            throw new NotFoundException(__('Invalid lookup list item'));
-        }
-        if ($this->request->is(['post', 'put']))
-        {
-            if ($this->LookupListItem->save($this->request->data))
-            {
-                $this->Session->setFlash(__('The lookup list item has been saved.'), 'flash_notification');
-                return $this->redirect(['controller' => 'lookup_lists', 'action' => 'edit', $this->request->data["LookupListItem"]['lookup_list_id']]);
-            }
-            else
-            {
-                debug($this->LookupListItem->validationErrors);
-                $this->Session->setFlash(__('The lookup list item could not be saved. Please, try again.'), 'flash_error');
-            }
-        }
-        else
-        {
-            $options = ['conditions' => ['LookupListItem.' . $this->LookupListItem->primaryKey => $id]];
-            $this->request->data = $this->LookupListItem->find('first', $options);
-        }
-        $lookupLists = $this->LookupListItem->LookupList->find('list');
-        $this->set(compact('lookupLists'));
+        ConnectionManager::get('default')->driver()->autoQuoting(true);
+        $lookupList = $this->LookupListItems->LookupLists->get($this->request->query["lookup_list_id"]);
+        $this->set(compact('lookupList'));
+
+        return $this->Crud->execute();
     }
-
-    /**
-     * delete method
-     *
-     * @throws NotFoundException
-     * @param string $id
-     * @return void
-     */
-    public function delete($id = null)
-    {
-        $lookup_list = $this->LookupListItem->find('first', ['conditions' => ['LookupListItem.id' => $id]]);
-
-        $list_id = null;
-
-        if ($lookup_list)
-            $list_id = $lookup_list["LookupListItem"]["lookup_list_id"];
-
-        $this->LookupListItem->id = $id;
-        if (!$this->LookupListItem->exists())
-        {
-            throw new NotFoundException(__('Invalid lookup list item'));
-        }
-        $this->request->allowMethod('post', 'delete');
-        if ($this->LookupListItem->delete())
-        {
-            $this->Session->setFlash(__('The lookup list item has been deleted.'), 'flash_notification');
-        }
-        else
-        {
-            $this->Session->setFlash(__('The lookup list item could not be deleted. Please, try again.'), 'flash_error');
-        }
-
-
-
-
-        return $this->redirect(['controller' => 'lookup_lists', 'action' => 'edit', $list_id]);
-    }
-
 }

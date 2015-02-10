@@ -3,6 +3,8 @@
 namespace LookupLists\Controller;
 
 use App\Controller\AppController;
+use Cake\Event\Event;
+use Crud\Controller\ControllerTrait;
 
 /**
  * LookupLists Controller
@@ -14,111 +16,37 @@ use App\Controller\AppController;
 class LookupListsController extends AppController
 {
 
+    use ControllerTrait;
+
     /**
      * Components
      *
      * @var array
      */
-    public $components = ['Paginator'];
+    public $components = [
+        'Crud.Crud' => [
+            'actions' => [
+                'Crud.Index',
+                'Crud.Add',
+                'Crud.Edit',
+                'Crud.Delete'
+            ]
+        ]
+    ];
 
-    /**
-     * index method
-     *
-     * @return void
-     */
-    public function index()
+    public function edit()
     {
-        $this->LookupList->recursive = 0;
-
-        $this->Paginator->settings = [
-            'order' => ['LookupList.name' => 'ASC'],
-        ];
-
-        $lookupLists = $this->Paginator->paginate();
-
-        $this->set('lookupLists', $lookupLists);
-    }
-
-    /**
-     * add method
-     *
-     * @return void
-     */
-    public function add()
-    {
-        if ($this->request->is('post'))
-        {
-            $this->LookupList->create();
-            if ($this->LookupList->save($this->request->data))
-            {
-                $this->Session->setFlash(__('The lookup list has been saved.'), 'flash_notification');
-                return $this->redirect(['action' => 'index']);
+        $this->Crud->on(
+            'Crud.beforeFind',
+            function (Event $event) {
+                $event->subject->query
+                    ->contain([
+                        'LookupListItems'
+                    ]);
             }
-            else
-            {
-                $this->Session->setFlash(__('The lookup list could not be saved. Please, try again.'));
-            }
-        }
-    }
+        );
 
-    /**
-     * edit method
-     *
-     * @throws NotFoundException
-     * @param string $id
-     * @return void
-     */
-    public function edit($id = null)
-    {
-        if (!$this->LookupList->exists($id))
-        {
-            throw new NotFoundException(__('Invalid lookup list'));
-        }
-        if ($this->request->is(['post', 'put']))
-        {
-            if ($this->LookupList->save($this->request->data))
-            {
-                $this->Session->setFlash(__('The lookup list has been saved.'), 'flash_notification');
-                return $this->redirect(['action' => 'edit', $id]);
-            }
-            else
-            {
-                $this->Session->setFlash(__('The lookup list could not be saved. Please, try again.'), 'flash_error');
-            }
-        }
-        else
-        {
-            $options = ['recursive' => 1, 'conditions' => ['LookupList.' . $this->LookupList->primaryKey => $id]];
-            $this->request->data = $this->LookupList->find('first', $options);
-        }
-        $options = ['recursive' => 1, 'conditions' => ['LookupList.' . $this->LookupList->primaryKey => $id]];
-        $this->set('lookupList', $this->LookupList->find('first', $options));
-    }
-
-    /**
-     * delete method
-     *
-     * @throws NotFoundException
-     * @param string $id
-     * @return void
-     */
-    public function delete($id = null)
-    {
-        $this->LookupList->id = $id;
-        if (!$this->LookupList->exists())
-        {
-            throw new NotFoundException(__('Invalid lookup list'), 'flash_error');
-        }
-        $this->request->allowMethod('post', 'delete');
-        if ($this->LookupList->delete($id, true))
-        {
-            $this->Session->setFlash(__('The lookup list has been deleted.'), 'flash_notification');
-        }
-        else
-        {
-            $this->Session->setFlash(__('The lookup list could not be deleted. Please, try again.'), 'flash_error');
-        }
-        return $this->redirect(['action' => 'index']);
+        return $this->Crud->execute();
     }
 
     //## Download a json file with all available list data

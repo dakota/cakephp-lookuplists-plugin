@@ -4,14 +4,10 @@
 </ol>
 
 <div class="lookupLists index">
-
-
     <h2><?php echo __('Lookup Lists'); ?></h2>
-    <?php echo $this->Html->link('Create New List', array('controller' => 'lookup_lists', 'action' => 'add'), array('class' => 'btn btn-primary btn-xs')) ?>
-    <?php //echo $this->Html->link('Export', array('controller' => 'lookup_lists', 'action' => 'export'), array('class' => 'btn btn-info btn-xs')) ?>
-    <?php //echo $this->Html->link('Import', array('controller' => 'lookup_lists', 'action' => 'import'), array('class' => 'btn btn-info btn-xs')) ?>
-
-
+    <?php echo $this->Html->link('Create New List', ['controller' => 'LookupLists', 'action' => 'add'], ['class' => 'btn btn-primary btn-xs']) ?>
+    <?php //echo $this->Html->link('Export', array('controller' => 'LookupLists', 'action' => 'export'), array('class' => 'btn btn-info btn-xs')) ?>
+    <?php //echo $this->Html->link('Import', array('controller' => 'LookupLists', 'action' => 'import'), array('class' => 'btn btn-info btn-xs')) ?>
 
     <table cellpadding="0" cellspacing="0" class="table">
         <thead>
@@ -26,13 +22,13 @@
         <tbody>
             <?php foreach ($lookupLists as $lookupList): ?>
                 <tr>
-                    <td><?php echo h($lookupList['LookupList']['id']); ?>&nbsp;</td>
-                    <td><?php echo $this->html->link($lookupList['LookupList']['name'], array('plugin' => 'lookup_lists', 'controller' => 'lookup_lists', 'action' => 'edit', $lookupList['LookupList']['id'])); ?>&nbsp;</td>
-                    <td><?php echo h($lookupList['LookupList']['slug']); ?>&nbsp;</td>
-                    <td><?php echo $lookupList['LookupList']['public'] ? 'Yes' : 'No'; ?>&nbsp;</td>
+                    <td><?php echo h($lookupList->id); ?>&nbsp;</td>
+                    <td><?php echo $this->html->link($lookupList->name, ['plugin' => 'LookupLists', 'controller' => 'LookupLists', 'action' => 'edit', $lookupList->id]); ?>&nbsp;</td>
+                    <td><?php echo h($lookupList->slug); ?>&nbsp;</td>
+                    <td><?php echo $lookupList->public ? 'Yes' : 'No'; ?>&nbsp;</td>
                     <td class="actions">
-                        <?php echo $this->Html->link(__('Edit'), array('plugin' => 'lookup_lists', 'action' => 'edit', $lookupList['LookupList']['id']), array('class' => 'btn btn-primary btn-xs')); ?>
-                        <?php echo $this->Form->postLink(__('Delete'), array('plugin' => 'lookup_lists', 'action' => 'delete', $lookupList['LookupList']['id']), array('class' => 'btn btn-danger btn-xs'), __('Are you sure you want to delete # {0}?', $lookupList['LookupList']['id'])); ?>
+                        <?php echo $this->Html->link(__('Edit'), ['plugin' => 'LookupLists', 'action' => 'edit', $lookupList->id], ['class' => 'btn btn-primary btn-xs']); ?>
+                        <?php echo $this->Form->postLink(__('Delete'), ['plugin' => 'LookupLists', 'action' => 'delete', $lookupList->id], ['class' => 'btn btn-danger btn-xs'], __('Are you sure you want to delete # {0}?', $lookupList->id)); ?>
                     </td>
                 </tr>
             <?php endforeach; ?>
@@ -43,11 +39,11 @@
     <nav>
         <ul class="pagination">
             <?php
-            echo $this->Paginator->first('&laquo;', array('escape' => false, 'tag' => 'li', 'disabledTag' => 'a'), null, array('escape' => false, 'class' => 'disabled', 'tag' => 'li', 'disabledTag' => 'a'));
-            echo $this->Paginator->prev('&laquo;', array('escape' => false, 'tag' => 'li', 'disabledTag' => 'a'), null, array('escape' => false, 'class' => 'disabled', 'tag' => 'li', 'disabledTag' => 'a'));
-            echo $this->Paginator->numbers(array('separator' => '', 'class' => 'paging', 'tag' => 'li', 'currentClass' => 'active', 'currentTag' => 'a'));
-            echo $this->Paginator->next('&raquo;', array('escape' => false, 'tag' => 'li', 'disabledTag' => 'a'), null, array('escape' => false, 'class' => 'disabled', 'tag' => 'li', 'disabledTag' => 'a'));
-            echo $this->Paginator->last('&raquo;', array('escape' => false, 'tag' => 'li', 'disabledTag' => 'a'), null, array('escape' => false, 'class' => 'disabled', 'tag' => 'li', 'disabledTag' => 'a'));
+            echo $this->Paginator->first('&laquo;', ['escape' => false, 'tag' => 'li', 'disabledTag' => 'a'], null, ['escape' => false, 'class' => 'disabled', 'tag' => 'li', 'disabledTag' => 'a']);
+            echo $this->Paginator->prev('&laquo;', ['escape' => false, 'tag' => 'li', 'disabledTag' => 'a'], null, ['escape' => false, 'class' => 'disabled', 'tag' => 'li', 'disabledTag' => 'a']);
+            echo $this->Paginator->numbers(['separator' => '', 'class' => 'paging', 'tag' => 'li', 'currentClass' => 'active', 'currentTag' => 'a']);
+            echo $this->Paginator->next('&raquo;', ['escape' => false, 'tag' => 'li', 'disabledTag' => 'a'], null, ['escape' => false, 'class' => 'disabled', 'tag' => 'li', 'disabledTag' => 'a']);
+            echo $this->Paginator->last('&raquo;', ['escape' => false, 'tag' => 'li', 'disabledTag' => 'a'], null, ['escape' => false, 'class' => 'disabled', 'tag' => 'li', 'disabledTag' => 'a']);
             ?>
         </ul>
     </nav>
