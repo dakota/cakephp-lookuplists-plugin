@@ -10,7 +10,8 @@
         }
     ],
     "require": {
-        "cakephp/cakephp": "3.0.x-dev"
+        "cakephp/cakephp": "3.0.x-dev",
+        "friendsofcake/crud": "dev-cake3"
     },
     "autoload": {
         "psr-4": {
