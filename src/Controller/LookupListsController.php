@@ -34,6 +34,21 @@ class LookupListsController extends AppController
         ]
     ];
 
+    public function index()
+    {
+        return $this->Crud->execute();
+    }
+
+    public function delete()
+    {
+        return $this->Crud->execute();
+    }
+
+    public function add()
+    {
+        return $this->Crud->execute();
+    }
+
     public function edit()
     {
         $this->Crud->on(

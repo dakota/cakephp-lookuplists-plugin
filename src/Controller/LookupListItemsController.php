@@ -84,4 +84,9 @@ class LookupListItemsController extends AppController
 
         return $this->Crud->execute();
     }
+
+    public function delete()
+    {
+        return $this->Crud->execute();
+    }
 }

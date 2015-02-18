@@ -5,8 +5,10 @@ namespace LookupLists\Model\Table;
 use Cake\Cache\Cache;
 use Cake\Event\Event;
 use Cake\ORM\Entity;
+use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
+use Cake\Validation\Validator;
 
 /**
  * LookupListItem Model
@@ -64,6 +66,29 @@ class LookupListItemsTable extends Table
             ],
         ],
     ];
+
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->notEmpty('value', 'Item value is required.');
+
+        return $validator;
+    }
+
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules
+            ->add(
+                new IsUnique(['slug']),
+                '_uniqueSlug',
+                [
+                    'errorField' => 'value',
+                    'message' => 'Item slug must be unique.'
+                ]
+            );
+
+        return $rules;
+    }
 
     public function initialize(array $options = [])
     {

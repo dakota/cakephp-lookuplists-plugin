@@ -6,8 +6,11 @@ use Cake\Cache\Cache;
 use Cake\Event\Event;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
+use Cake\ORM\Rule\IsUnique;
+use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
+use Cake\Validation\Validator;
 
 /**
  * LookupList Model
@@ -15,46 +18,24 @@ use Cake\Utility\Inflector;
  */
 class LookupListsTable extends Table
 {
+    public function validationDefault(Validator $validator)
+    {
+        $validator
+            ->notEmpty('name', 'List name is required');
 
-    /**
-     * Display field
-     *
-     * @var string
-     */
-    public $displayField = 'name';
+        return $validator;
+    }
 
-    /**
-     * Validation rules
-     *
-     * @var array
-     */
-    public $validate = [
-        'slug' => [
-            'notEmpty' => [
-                'rule' => ['notEmpty'],
-                'message' => 'slug is required',
-                'allowEmpty' => false,
-                'required' => false,
-            ],
-            'unique' => [
-                'rule' => 'isUnique',
-                'message' => 'List name needs to be Unique',
-            ],
-        ],
-        'name' => [
-            'notEmpty' => [
-                'rule' => ['notEmpty'],
-                'message' => 'List Name is required',
-                'required' => true,
-                'on' => 'create',
-            ],
-        ],
-        'public' => [
-            'boolean' => [
-                'rule' => ['boolean'],
-            ],
-        ],
-    ];
+    public function buildRules(RulesChecker $rules)
+    {
+        $rules
+            ->add(new IsUnique(['slug']), '_uniqueSlug', [
+                'errorField' => 'name',
+                'message' => 'List name must be unique.'
+            ]);
+
+        return $rules;
+    }
 
     public function initialize(array $options = [])
     {
