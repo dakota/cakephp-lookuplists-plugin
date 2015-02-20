@@ -39,7 +39,9 @@ class LookupListsTable extends Table
 
     public function initialize(array $options = [])
     {
-        $this->hasMany('LookupListItems');
+        $this->hasMany('LookupListItems', [
+            'className' => 'LookupLists.LookupListItems'
+        ]);
 
         parent::initialize($options);
     }
@@ -71,7 +73,7 @@ class LookupListsTable extends Table
             $list_items = $this->LookupListItems->find(
                 'list',
                 [
-                    'idField' => 'item_id',
+                    'keyField' => 'item_id',
                     'valueField' => 'value',
                 ]
             )
