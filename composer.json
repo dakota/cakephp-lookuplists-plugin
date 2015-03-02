@@ -11,7 +11,8 @@
     ],
     "require": {
         "cakephp/cakephp": "3.0.x-dev",
-        "friendsofcake/crud": "dev-cake3"
+        "friendsofcake/crud": "dev-cake3",
+	"cakephp/migrations": "dev-master"
     },
     "autoload": {
         "psr-4": {
