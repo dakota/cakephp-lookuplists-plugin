@@ -46,6 +46,12 @@ class LookupListsTable extends Table
         parent::initialize($options);
     }
 
+    public function afterSave(Event $event, Entity $entity)
+    {
+        Cache::delete("LookupListItems-" . $entity->slug);
+        Cache::delete("LookupListDefault-" . $entity->slug);
+    }
+
     public function beforeSave(Event $event, Entity $entity)
     {
         if (!isset($entity->slug)) {
@@ -61,37 +67,30 @@ class LookupListsTable extends Table
 
         $list_slug = $options['list_slug'];
 
-        $key = "LookupListIDbySlug_" . $list_slug;
+        $key = "LookupListItems-" . $list_slug;
 
-        $list_id = $this->_listIdBySlug($list_slug);
-
-        $list_items = [];
-
-        if ($list_id) {
-            $key = "LookupListItemsByListID_" . $list_id['LookupList']['id'];
-
-            $list_items = $this->LookupListItems->find(
-                'list',
+        $list_items = $this->LookupListItems->find(
+            'list',
+            [
+                'keyField' => 'item_id',
+                'valueField' => 'value',
+            ]
+        )
+            ->select(
                 [
-                    'keyField' => 'item_id',
-                    'valueField' => 'value',
+                    'LookupListItems.item_id',
+                    'LookupListItems.value'
                 ]
             )
-                ->select(
-                    [
-                        'LookupListItems.item_id',
-                        'LookupListItems.value'
-                    ]
-                )
-                ->where(
-                    [
-                        'LookupListItems.lookup_list_id' => $list_id,
-                        'LookupListItems.public' => true,
-                    ]
-                )
-                ->order(['LookupListItems.display_order' => 'ASC'])
-                ->cache($key);
-        }
+            ->contain(['LookupList'])
+            ->where(
+                [
+                    'LookupLists.slug' => $list_slug,
+                    'LookupListItems.public' => true,
+                ]
+            )
+            ->order(['LookupListItems.display_order' => 'ASC'])
+            ->cache($key);
 
         return $list_items;
     }
@@ -100,17 +99,11 @@ class LookupListsTable extends Table
     {
         $default = null;
 
-        $list_id = $this->_listIdBySlug($list_slug);
-
-        if (!$list_id) {
-            return $default;
-        }
-
-        $key = "LookupList_DefaultByListID_" . $list_id;
+        $key = "LookupListDefault-" . $list_slug;
 
         $list_item = Cache::remember(
             $key,
-            function () use ($list_id) {
+            function () use ($list_slug) {
                 $list_item = $this->LookupListItems
                     ->find()
                     ->select(
@@ -118,92 +111,45 @@ class LookupListsTable extends Table
                             'LookupListItems.item_id'
                         ]
                     )
+                    ->contain(['LookupLists'])
                     ->where(
                         [
-                            'LookupListItems.lookup_list_id' => $list_id,
+                            'LookupLists.slug' => $list_slug,
                             'LookupListItems.default' => true
                         ]
-                    )
-                    ->first();
+                    );
 
-                if (!$list_item) {
-                    $list_item = $this->LookupListItems
-                        ->find()
-                        ->select(
-                            [
-                                'LookupListItems.item_id'
-                            ]
-                        )
-                        ->where(
-                            [
-                                'LookupListItems.lookup_list_id' => $list_id,
-                            ]
-                        )
-                        ->order(
-                            [
-                                'LookupListItems.item_id' => 'ASC'
-                            ]
-                        )
-                        ->first();
+                if ($list_item->count() === 0) {
+                    $list_item
+                        ->where(['LookupLists.slug' => $list_slug], [], true)
+                        ->order([
+                            'LookupListItems.item_id' => 'ASC'
+                        ]);
                 }
 
-                return $list_item;
+                return $list_item->first();
             }
         );
 
-        if ($list_item) {
-            return $list_item->item_id;
-        }
-
-        return $default;
+        return $list_item ? $list_item->item_id : $default;
     }
 
     public function getItemId($list_slug, $slug)
     {
         $item_id = null;
 
-        $list_id = $this->_listIdBySlug($list_slug);
-
-        if ($list_id) {
-            $list_item = $this->LookupListItems
-                ->find()
-                ->select(['LookupListItems.item_id'])
-                ->where(
-                    [
-                        'LookupListItems.lookup_list_id' => $list_id,
-                        'LookupListItems.slug like ' => $slug
-                    ]
-                )
-                ->first();
-
-            if ($list_item) {
-                return $list_item->item_id;
-            }
-        }
-
-        return $item_id;
-    }
-
-    private function _listIdBySlug($list_slug)
-    {
-        $key = "LookupList_listIdBySlug_" . $list_slug;
-
-        $list_id = $this->find()
-            ->select(
-                [
-                    'LookupLists.id'
-                ]
-            )
+        $list_item = $this->LookupListItems
+            ->find()
+            ->select(['LookupListItems.item_id'])
+            ->contain(['LookupLists'])
             ->where(
                 [
-                    'LookupLists.slug' => $list_slug
+                    'LookupLists.slug' => $list_slug,
+                    'LookupListItems.slug like ' => $slug
                 ]
             )
-            ->cache($key)
             ->first();
 
-
-        return $list_id->id;
+        return $list_item ? $list_item->item_id : $item_id;
     }
-
 }
