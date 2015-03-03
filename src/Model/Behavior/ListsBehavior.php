@@ -166,19 +166,4 @@ class ListsBehavior extends Behavior
         return null;
     }
 
-    private function _extract_list_name_from_slug_name(\Model $model, $slug)
-    {
-        foreach ($this->settings[$model->name]['fields'] as $key => $field) {
-            if (!isset($field['list'])) {
-                continue;
-            }
-
-            if (strtolower($slug) == strtolower($field['slug_field'])) {
-                return $field['list'];
-            }
-        }
-
-        return null;
-    }
-
 }
