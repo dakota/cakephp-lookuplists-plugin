@@ -82,7 +82,7 @@ class LookupListsTable extends Table
                     'LookupListItems.value'
                 ]
             )
-            ->contain(['LookupList'])
+            ->contain(['LookupLists'])
             ->where(
                 [
                     'LookupLists.slug' => $list_slug,

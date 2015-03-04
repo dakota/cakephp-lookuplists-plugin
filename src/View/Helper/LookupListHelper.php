@@ -18,8 +18,7 @@ class LookupListHelper extends Helper
         $default = $lookup_lists->getDefault($list_slug);
         
         $field_options = array_merge(['options' => $list, 'default' => $default], $options);
-        //debug($field_options);exit;
-        
+
         return $this->Form->input($field, $field_options);
     }
 
