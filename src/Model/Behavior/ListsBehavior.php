@@ -4,6 +4,7 @@ namespace LookupLists\Model\Behavior;
 
 use Cake\Cache\Cache;
 use Cake\Collection\Collection;
+use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
@@ -29,17 +30,12 @@ class ListsBehavior extends Behavior
         $this->_LookupLists = TableRegistry::get('LookupLists.LookupLists');
     }
 
-    public function beforeFind(Event $event, Query $query)
+    protected function _loadListData($alias, $fields)
     {
         $list_data = [];
-        $fields = $this->config('fields');
-
-        if (empty($fields)) {
-            return $query;
-        }
 
         foreach ($fields as $field => $db_list_name) {
-            $key = "LookupListData_" . $event->subject()->alias() . "_" . $field;
+            $key = "LookupListData." . $alias . "." . $field;
 
             $list_name = null;
 
@@ -62,6 +58,18 @@ class ListsBehavior extends Behavior
                 ->cache($key)
                 ->first();
         }
+        return $list_data;
+    }
+    
+    public function beforeFind(Event $event, Query $query)
+    {
+        $fields = $this->config('fields');
+
+        if (empty($fields)) {
+            return $query;
+        }
+
+        $list_data = $this->_loadListData($event->subject()->alias(), $fields);
 
         if (empty($list_data)) {
             return $query;
@@ -71,37 +79,64 @@ class ListsBehavior extends Behavior
             ->formatResults(function ($results) use ($list_data, $fields) {
                return $results
                    ->map(function ($entity) use ($list_data, $fields) {
-                        foreach ($list_data as $list_name => $list_entity) {
-                            if (empty($entity->{$list_name})) {
-                                continue;
-                            }
-                            $slug_field = "{$list_name}_slug";
-                            $value_field = "{$list_name}_value";
-
-                            if (isset($fields[$list_name]['slug_field'])) {
-                                $slug_field = $fields[$list_name]['slug_field'];
-                            }
-
-                            if (isset($fields[$list_name]['value_field'])) {
-                                $value_field = $fields[$list_name]['value_field'];
-                            }
-
-                            $entity->{$slug_field} = null;
-                            $entity->{$value_field} = null;
-
-                            if (empty($list_entity->lookup_list_items)) {
-                                continue;
-                            }
-                            $lookup_list_collection = new Collection($list_entity->lookup_list_items);
-                            $lookup_list_entity = $lookup_list_collection->firstMatch(['item_id' => $entity->{$list_name}]);
-                            $entity->{$slug_field} = $lookup_list_entity->slug;
-                            $entity->{$value_field} = $lookup_list_entity->value;
-                        }
-                        return $entity;
+                       if ($entity instanceof Entity) {
+                           return $this->formatEntity($entity, $list_data);
+                       }
+                       return $entity;
                    });
             });
 
         return $query;
+    }
+
+    public function formatEntity(Entity $entity, $list_data = null)
+    {
+        $fields = $this->config('fields');
+        if (!$list_data) {
+            $source = $entity->source();
+            $list_data = $this->_loadListData($source, $fields);
+        }
+
+        $properties = $entity->visibleProperties();
+
+        foreach ($properties as $property) {
+            if (empty($entity->{$property})) {
+                continue;
+            }
+
+            if (isset($list_data[$property])) {
+                $slug_field = "{$property}_slug";
+                $value_field = "{$property}_value";
+
+                if (isset($fields[$property]['slug_field'])) {
+                    $slug_field = $fields[$property]['slug_field'];
+                }
+
+                if (isset($fields[$property]['value_field'])) {
+                    $value_field = $fields[$property]['value_field'];
+                }
+
+                $entity->{$slug_field} = null;
+                $entity->{$value_field} = null;
+
+                if (empty($list_data[$property]->lookup_list_items)) {
+                    continue;
+                }
+                $lookup_list_collection = new Collection($list_data[$property]->lookup_list_items);
+                $lookup_list_entity = $lookup_list_collection->firstMatch(['item_id' => $entity->{$property}]);
+                $entity->{$slug_field} = $lookup_list_entity->slug;
+                $entity->{$value_field} = $lookup_list_entity->value;
+            }
+
+            if ($entity->{$property} instanceof EntityInterface) {
+                $entity_source = $this->_table->association($entity->{$property}->source());
+                if ($entity_source->hasBehavior('Lists')) {
+                    $entity_source->formatEntity($entity->{$property});
+                }
+            }
+        }
+
+        return $entity;
     }
 
     public function beforeSave(Event $event, Entity $entity)
