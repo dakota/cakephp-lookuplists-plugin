@@ -35,7 +35,7 @@ class ListsBehavior extends Behavior
         $fields = $this->config('fields');
 
         if (empty($fields)) {
-            return;
+            return $query;
         }
 
         foreach ($fields as $field => $db_list_name) {
@@ -64,7 +64,7 @@ class ListsBehavior extends Behavior
         }
 
         if (empty($list_data)) {
-            return;
+            return $query;
         }
 
         $query
@@ -93,8 +93,7 @@ class ListsBehavior extends Behavior
                                 continue;
                             }
                             $lookup_list_collection = new Collection($list_entity->lookup_list_items);
-                            $lookup_list_entity = $lookup_list_collection
-                                ->firstMatch(['item_id' => $entity->{$list_name}]);
+                            $lookup_list_entity = $lookup_list_collection->firstMatch(['item_id' => $entity->{$list_name}]);
                             $entity->{$slug_field} = $lookup_list_entity->slug;
                             $entity->{$value_field} = $lookup_list_entity->value;
                         }
