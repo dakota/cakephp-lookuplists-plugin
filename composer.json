@@ -10,9 +10,9 @@
         }
     ],
     "require": {
-        "cakephp/cakephp": "3.0.x-dev",
+        "cakephp/cakephp": "~3.0.0",
         "friendsofcake/crud": "dev-cake3",
-	"cakephp/migrations": "dev-master"
+        "cakephp/migrations": "~1.0.0"
     },
     "autoload": {
         "psr-4": {
